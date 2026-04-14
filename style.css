@@ -1,0 +1,181 @@
+@import url(reset.css);
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1&display=swap");
+
+/******* 共通　*********/
+body {
+  font-family: "Noto Sans", sans-serif;
+}
+
+.inner {
+  width: 100%;
+  max-width: 1000px;
+  margin-inline: auto;
+}
+
+h3 {
+  font-size: 32px;
+  color: #655046;
+  font-weight: bold;
+  margin-bottom: 21px;
+  text-align: center;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: normal;
+  color: #655046;
+  margin-bottom: 60px;
+  text-align: center;
+}
+
+/********* ヘッダー　*********/
+header {
+  width: 100%;
+  height: 148px;
+  background-color: #134222;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+h1 {
+  width: 139px;
+  margin-inline: auto;
+  margin-bottom: 35px;
+}
+
+.nav_list {
+  display: flex;
+  justify-content: center;
+  gap: 65px;
+}
+
+.nav_list li a {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+/********* メインビジュアル　*********/
+.mv {
+  background-image: url(img/mv.jpg);
+  /* background-repeat: no-repeat; */
+  background-size: cover;
+  height: 80vh;
+  margin-bottom: 78px;
+}
+
+h2 {
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 56px;
+  color: #fff;
+  letter-spacing: 0.1em;
+  line-height: 100px;
+  padding-top: 250px;
+}
+
+/********* アバウト　*********/
+#about {
+  text-align: center;
+  background-image: url(img/illust_coffeebean.png);
+  background-repeat: no-repeat;
+  background-size: 160px;
+  background-position: right 30px top;
+  padding-bottom: 197px;
+}
+.about_p {
+  font-size: 16px;
+}
+
+/********* メニュー　*********/
+.menu_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 50px;
+}
+.menu_list li {
+  width: calc((100% - 100px) / 3);
+
+  text-align: center;
+  margin-bottom: 89px;
+}
+.sp_name {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.sp_price {
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+.sp_text {
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  line-height: 2.5;
+}
+
+/********* メニューバック　*********/
+.menu_back {
+  background-image: url(img/bk_menu.jpg);
+  background-size: cover;
+  margin-bottom: 80px;
+  padding: 79px 0;
+}
+
+.sp_menu {
+  display: flex;
+  gap: 20px 40px;
+  justify-content: space-between;
+}
+.sp_menu + .sp_menu {
+  margin-top: 60px;
+}
+.text,
+.img {
+  width: 50%;
+}
+.img img {
+  width: 100%;
+  height: auto;
+}
+
+.text p {
+  color: #fff;
+}
+
+/********* アクセス　*********/
+
+#access {
+  background-image: url(img/illust_pot.png);
+  background-repeat: no-repeat;
+  background-size: 120px;
+  background-position: left 30px top;
+}
+.access_info {
+  text-align: center;
+  margin-bottom: 131px;
+}
+.access_info p {
+  font-size: 16px;
+  color: #655046;
+  line-height: 2;
+}
+
+/********* フッター　*********/
+footer {
+  background-color: #134222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+}
+
+footer p {
+  font-size: 12px;
+  align-items: center;
+  text-align: center;
+
+  color: #fff;
+}

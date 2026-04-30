@@ -7,27 +7,41 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <header>
-      <div class="inner">
-        <h1 class="logo">
-          <a href="index.html"></a><img src="img/logo.png" alt="ロゴ" />
-        </h1>
-        <ul class="nav_list">
-          <li><a href="#about">ABOUT</a></li>
-          <li><a href="#menu">MENU</a></li>
-          <li><a href="#access">ACCESS</a></li>
-          <li><a href="index.html">CONTACT</a></li>
-        </ul>
-      </div>
-    </header>
 
-    <main>
-      <section class="mv">
+    <!-- ===== SECTION 1: ヘッダー + メインビジュアル（ベージュ背景） ===== -->
+    <div class="section-hero">
+      <header>
         <div class="inner">
-          <h2>Good Time<br />Good Coffee</h2>
+          <h1 class="logo">
+            <a href="index.html"></a><img src="img/logo.png" alt="ロゴ" />
+          </h1>
+          <ul class="nav_list">
+            <li><a href="#about">ABOUT</a></li>
+            <li><a href="#menu">MENU</a></li>
+            <li><a href="#access">ACCESS</a></li>
+            <li><a href="index.html">CONTACT</a></li>
+          </ul>
         </div>
-      </section>
+      </header>
 
+      <main>
+        <section class="mv">
+          <div class="inner">
+            <h2>Good Time<br />Good Coffee</h2>
+          </div>
+        </section>
+      </main>
+
+      <!-- ウェーブ区切り: ベージュ → 白 -->
+      <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+          <path fill="#ffffff" d="M0,40 C180,80 360,0 540,40 C720,80 900,0 1080,40 C1260,80 1380,20 1440,35 L1440,80 L0,80 Z"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 2: About / Menu / Access（白背景） ===== -->
+    <div class="section-mid">
       <section id="about">
         <div class="inner">
           <h3>ABOUT</h3>
@@ -135,10 +149,19 @@
           ></iframe>
         </div>
       </section>
-    </main>
 
+      <!-- ウェーブ区切り: 白 → ベージュ -->
+      <div class="wave-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+          <path fill="#f0e8df" d="M0,40 C180,0 360,80 540,40 C720,0 900,80 1080,40 C1260,0 1380,60 1440,45 L1440,80 L0,80 Z"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ===== SECTION 3: フッター（ベージュ背景） ===== -->
     <footer>
       <p>@BASE Cafe</p>
     </footer>
+
   </body>
 </html>

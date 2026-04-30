@@ -11,6 +11,7 @@ body {
   width: 100%;
   max-width: 1000px;
   margin-inline: auto;
+  padding-inline: 20px;
 }
 
 h3 {
@@ -29,12 +30,53 @@ h4 {
   text-align: center;
 }
 
+/******* ウェーブ背景セクション *********/
+
+/*
+  3つのセクション構成:
+  section-hero  … ヘッダー + MV（ベージュ #f0e8df）
+  section-mid   … Works / About / Access（白 #ffffff）
+  footer        … フッター（ベージュ #f0e8df）
+*/
+
+.section-hero {
+  background-color: #f0e8df;
+  position: relative;
+  /* wave-bottom の高さ分だけ下に余白を確保 */
+  padding-bottom: 80px;
+}
+
+.section-mid {
+  background-color: #ffffff;
+  position: relative;
+  padding-bottom: 80px;
+}
+
+/* ウェーブ区切り共通 */
+.wave-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  line-height: 0; /* SVG下の謎の隙間を消す */
+  overflow: hidden;
+}
+
+.wave-bottom svg {
+  display: block;
+  width: 100%;
+  height: 80px;
+}
+
 /********* ヘッダー　*********/
 header {
   width: 100%;
   height: 148px;
   background-color: #134222;
   position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,10 +104,12 @@ h1 {
 /********* メインビジュアル　*********/
 .mv {
   background-image: url(img/mv.jpg);
-  /* background-repeat: no-repeat; */
   background-size: cover;
+  background-position: center;
+  /* fixed header 分をずらす */
+  padding-top: 148px;
   height: 80vh;
-  margin-bottom: 78px;
+  margin-bottom: 0;
 }
 
 h2 {
@@ -74,7 +118,7 @@ h2 {
   color: #fff;
   letter-spacing: 0.1em;
   line-height: 100px;
-  padding-top: 250px;
+  padding-top: 100px;
 }
 
 /********* アバウト　*********/
@@ -84,32 +128,46 @@ h2 {
   background-repeat: no-repeat;
   background-size: 160px;
   background-position: right 30px top;
-  padding-bottom: 197px;
+  padding-top: 80px;
+  padding-bottom: 80px;
 }
+
 .about_p {
   font-size: 16px;
 }
 
 /********* メニュー　*********/
+#menu {
+  padding-bottom: 60px;
+}
+
 .menu_list {
   display: flex;
   flex-wrap: wrap;
   gap: 0 50px;
 }
+
 .menu_list li {
   width: calc((100% - 100px) / 3);
-
   text-align: center;
   margin-bottom: 89px;
 }
+
+.menu_list li img {
+  width: 100%;
+  height: auto;
+}
+
 .sp_name {
   font-size: 18px;
   margin-bottom: 10px;
 }
+
 .sp_price {
   font-size: 18px;
   margin-bottom: 40px;
 }
+
 .sp_text {
   font-size: 14px;
   letter-spacing: 0.1em;
@@ -129,13 +187,16 @@ h2 {
   gap: 20px 40px;
   justify-content: space-between;
 }
+
 .sp_menu + .sp_menu {
   margin-top: 60px;
 }
+
 .text,
 .img {
   width: 50%;
 }
+
 .img img {
   width: 100%;
   height: auto;
@@ -146,17 +207,19 @@ h2 {
 }
 
 /********* アクセス　*********/
-
 #access {
   background-image: url(img/illust_pot.png);
   background-repeat: no-repeat;
   background-size: 120px;
   background-position: left 30px top;
+  padding-top: 60px;
 }
+
 .access_info {
   text-align: center;
-  margin-bottom: 131px;
+  margin-bottom: 60px;
 }
+
 .access_info p {
   font-size: 16px;
   color: #655046;
@@ -165,17 +228,101 @@ h2 {
 
 /********* フッター　*********/
 footer {
-  background-color: #134222;
+  background-color: #f0e8df;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px;
+  height: 80px;
 }
 
 footer p {
   font-size: 12px;
-  align-items: center;
-  text-align: center;
+  color: #655046;
+}
 
-  color: #fff;
+/********* レスポンシブ（タブレット以下） *********/
+@media (max-width: 768px) {
+  .nav_list {
+    gap: 24px;
+  }
+
+  h2 {
+    font-size: 36px;
+    line-height: 1.4;
+    padding-top: 60px;
+  }
+
+  .menu_list li {
+    width: calc((100% - 50px) / 2);
+  }
+
+  .sp_menu {
+    flex-direction: column;
+  }
+
+  .sp_menu .text,
+  .sp_menu .img {
+    width: 100%;
+  }
+
+  /* 画像が先、テキストが後になるよう並び替え */
+  .sp_menu:nth-child(2) {
+    flex-direction: column-reverse;
+  }
+
+  /* ウェーブの高さをやや小さく */
+  .wave-bottom svg {
+    height: 50px;
+  }
+
+  .section-hero,
+  .section-mid {
+    padding-bottom: 50px;
+  }
+}
+
+/********* レスポンシブ（スマホ） *********/
+@media (max-width: 480px) {
+  header {
+    height: 100px;
+  }
+
+  h1 {
+    width: 100px;
+    margin-bottom: 16px;
+  }
+
+  .nav_list {
+    gap: 16px;
+  }
+
+  .nav_list li a {
+    font-size: 13px;
+  }
+
+  .mv {
+    padding-top: 100px;
+    height: 60vh;
+  }
+
+  h2 {
+    font-size: 28px;
+  }
+
+  h3 {
+    font-size: 24px;
+  }
+
+  .menu_list li {
+    width: 100%;
+  }
+
+  .wave-bottom svg {
+    height: 40px;
+  }
+
+  .section-hero,
+  .section-mid {
+    padding-bottom: 40px;
+  }
 }

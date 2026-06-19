@@ -1,0 +1,674 @@
+@import url(../reset.css);
+@import url("https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Shippori+Mincho+B1:wght@500;700&display=swap");
+
+/* ============ カラー変数 ============ */
+:root {
+  --peach: #ffb6a3;
+  --peach-deep: #ff8e7a;
+  --pink: #ffd9e0;
+  --pink-deep: #ff9eb5;
+  --pink-bg: #fff1f1;
+  --cream: #fffaf7;
+  --text: #7a5a52;
+  --text-soft: #a98a82;
+  --white: #ffffff;
+  --shadow: 0 18px 40px rgba(255, 142, 122, 0.18);
+  --shadow-sm: 0 8px 22px rgba(255, 142, 122, 0.14);
+}
+
+/* ============ 共通 ============ */
+body {
+  font-family: "Zen Maru Gothic", sans-serif;
+  color: var(--text);
+  background: var(--cream);
+  line-height: 1.9;
+  letter-spacing: 0.04em;
+  overflow-x: hidden;
+}
+
+.inner {
+  width: 100%;
+  max-width: 1040px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.accent {
+  color: var(--peach-deep);
+}
+
+.sp-only {
+  display: none;
+}
+
+/* セクション見出し */
+.sec-title {
+  font-size: clamp(26px, 5vw, 38px);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 48px;
+  color: var(--text);
+}
+.sec-title__sub {
+  display: block;
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 14px;
+  letter-spacing: 0.3em;
+  color: var(--pink-deep);
+  margin-bottom: 10px;
+}
+
+/* ボタン */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 17px 34px;
+  border-radius: 999px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+  line-height: 1.4;
+}
+.btn--primary {
+  background: linear-gradient(135deg, var(--peach), var(--peach-deep));
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+.btn--ghost {
+  background: var(--white);
+  color: var(--peach-deep);
+  border: 2px solid var(--peach);
+  box-shadow: var(--shadow-sm);
+}
+.btn--lg {
+  font-size: 18px;
+  padding: 20px 50px;
+}
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+/* ============ ヘッダー ============ */
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px rgba(255, 142, 122, 0.1);
+}
+.header__inner {
+  max-width: 1040px;
+  margin-inline: auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header__logo {
+  font-family: "Shippori Mincho B1", serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--peach-deep);
+  letter-spacing: 0.12em;
+}
+.header__logo span {
+  color: var(--text);
+}
+.header__cta {
+  background: linear-gradient(135deg, var(--peach), var(--peach-deep));
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============ ① ヒーロー ============ */
+.hero {
+  position: relative;
+  padding: 130px 24px 90px;
+  text-align: center;
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--pink) 0%, transparent 55%),
+    linear-gradient(180deg, #ffe3e0 0%, #ffece8 45%, var(--cream) 100%);
+  overflow: hidden;
+}
+/* 斜めの光のライン */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: 8%;
+  width: 60%;
+  height: 130%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 60%
+  );
+  transform: rotate(8deg);
+  pointer-events: none;
+}
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  margin-inline: auto;
+}
+.hero__badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--peach-deep);
+  background: var(--white);
+  padding: 7px 18px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 22px;
+}
+.hero__title {
+  font-family: "Shippori Mincho B1", serif;
+  font-size: clamp(34px, 8vw, 56px);
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+.hero__lead {
+  font-size: clamp(15px, 4vw, 18px);
+  font-weight: 500;
+  color: var(--text-soft);
+  margin-bottom: 30px;
+}
+
+/* ヒーロービジュアル */
+.hero__visual {
+  position: relative;
+  width: min(78%, 360px);
+  margin: 0 auto 36px;
+}
+.hero__img {
+  width: 100%;
+  height: auto;
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  display: block;
+}
+.hero__visual-fallback,
+.product__visual-fallback {
+  display: none;
+}
+.hero__visual.is-fallback {
+  aspect-ratio: 3 / 4;
+  background: radial-gradient(circle at 50% 35%, #fff, var(--pink));
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+}
+.hero__visual.is-fallback .hero__visual-fallback {
+  display: block;
+  font-size: 90px;
+  line-height: 1;
+}
+.hero__btns {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 360px;
+  margin-inline: auto;
+}
+
+/* 装飾の葉・きらめき */
+.hero__decor span,
+.campaign__decor span {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.85;
+  animation: float 6s ease-in-out infinite;
+}
+.leaf--1 { top: 16%; left: 7%; font-size: 30px; }
+.leaf--2 { top: 60%; right: 8%; font-size: 26px; animation-delay: 1.5s; }
+.sparkle { color: var(--white); text-shadow: 0 0 10px rgba(255, 158, 181, 0.8); }
+.sparkle--1 { top: 24%; right: 14%; font-size: 22px; animation-delay: 0.6s; }
+.sparkle--2 { top: 70%; left: 12%; font-size: 18px; animation-delay: 2s; }
+.sparkle--3 { top: 18%; left: 10%; font-size: 24px; }
+.sparkle--4 { bottom: 16%; right: 12%; font-size: 20px; animation-delay: 1s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-14px) rotate(6deg); }
+}
+
+/* 下端の波 */
+.wave--bottom {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 50px;
+  background: var(--cream);
+  -webkit-mask: radial-gradient(50% 100% at 50% 0, transparent 70%, #000 71%) repeat-x;
+  mask: radial-gradient(34px 50px at 50% 0, transparent 70%, #000 71%) repeat-x;
+  mask-size: 68px 100%;
+}
+
+/* ============ ② 共感 ============ */
+.empathy {
+  padding: 80px 0 90px;
+  background: var(--cream);
+}
+.empathy__list {
+  max-width: 560px;
+  margin: 0 auto 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.empathy__list li {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 18px 24px;
+  text-align: center;
+  font-size: clamp(15px, 4vw, 17px);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.empathy__list li::before {
+  content: "🍑";
+  margin-right: 8px;
+}
+.empathy__catch {
+  text-align: center;
+  font-family: "Shippori Mincho B1", serif;
+  font-size: clamp(22px, 6vw, 30px);
+  font-weight: 700;
+  color: var(--peach-deep);
+}
+
+/* ============ ③ 商品詳細 ============ */
+.product {
+  padding: 80px 0 90px;
+  background: linear-gradient(180deg, var(--pink-bg), var(--cream));
+}
+.product__inner {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+.product__visual {
+  flex: 0 0 42%;
+  position: relative;
+}
+.product__visual img {
+  width: 100%;
+  border-radius: 26px;
+  box-shadow: var(--shadow);
+}
+.product__visual.is-fallback {
+  aspect-ratio: 3 / 4;
+  background: radial-gradient(circle at 50% 35%, #fff, var(--pink));
+  border-radius: 26px;
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+}
+.product__visual.is-fallback .product__visual-fallback {
+  display: block;
+  font-size: 80px;
+}
+.product__body {
+  flex: 1;
+}
+.product__label {
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  color: var(--pink-deep);
+  margin-bottom: 8px;
+}
+.product__name {
+  font-family: "Shippori Mincho B1", serif;
+  font-size: clamp(30px, 6vw, 44px);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.product__price {
+  font-size: clamp(30px, 6vw, 40px);
+  font-weight: 900;
+  color: var(--peach-deep);
+  margin-bottom: 20px;
+}
+.product__price span {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-soft);
+}
+.product__text {
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+.product__note {
+  font-size: 13px;
+  color: var(--text-soft);
+  margin-bottom: 26px;
+}
+
+/* ============ ④ 商品特徴 ============ */
+.feature {
+  padding: 90px 0;
+  background: var(--cream);
+}
+.feature__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.fcard {
+  position: relative;
+  background: var(--white);
+  border-radius: 26px;
+  padding: 40px 36px 36px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #ffe6e0;
+  overflow: hidden;
+}
+.fcard__icon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
+}
+.fcard__num {
+  position: absolute;
+  top: 18px;
+  right: 26px;
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--pink);
+  line-height: 1;
+}
+.fcard__title {
+  font-size: clamp(20px, 5vw, 26px);
+  font-weight: 700;
+  color: var(--peach-deep);
+  margin-bottom: 14px;
+}
+.fcard__title::before {
+  content: "✔ ";
+  color: var(--pink-deep);
+}
+.fcard__text {
+  font-size: 15px;
+  color: var(--text);
+}
+.fcard__text strong {
+  color: var(--peach-deep);
+  font-weight: 900;
+  font-size: 1.1em;
+}
+
+/* ============ ⑤ キャンペーン ============ */
+.campaign {
+  position: relative;
+  padding: 80px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, var(--pink-deep), var(--peach));
+  color: var(--white);
+  overflow: hidden;
+}
+.campaign .accent {
+  color: #fff8e7;
+}
+.campaign__lead {
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.campaign__tag {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--white);
+  color: var(--peach-deep);
+  padding: 6px 18px;
+  border-radius: 999px;
+  margin-bottom: 24px;
+}
+.campaign__present {
+  font-family: "Shippori Mincho B1", serif;
+  font-size: clamp(28px, 8vw, 48px);
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 18px;
+}
+.campaign__slash {
+  font-weight: 500;
+  opacity: 0.9;
+  margin-inline: 6px;
+}
+.campaign__sub {
+  font-size: clamp(15px, 4vw, 18px);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.campaign__msg {
+  font-size: clamp(15px, 4vw, 18px);
+  font-weight: 700;
+}
+
+/* ============ ⑥ キャンペーン概要 ============ */
+.overview {
+  padding: 90px 0;
+  background: var(--cream);
+}
+.overview__table {
+  max-width: 720px;
+  margin: 0 auto 18px;
+  background: var(--white);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.overview__row {
+  display: flex;
+  border-bottom: 1px solid #ffe6e0;
+}
+.overview__row:last-child {
+  border-bottom: none;
+}
+.overview__row dt {
+  flex: 0 0 34%;
+  background: var(--pink-bg);
+  padding: 20px 22px;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+.overview__row dd {
+  flex: 1;
+  padding: 20px 22px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+.overview__note {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+/* ============ ⑦ 参加方法 ============ */
+.steps {
+  padding: 90px 0;
+  background: linear-gradient(180deg, var(--pink-bg), var(--cream));
+}
+.steps__list {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 44px;
+}
+.step {
+  flex: 1;
+  max-width: 280px;
+  background: var(--white);
+  border-radius: 24px;
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.step__num {
+  display: inline-block;
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--peach), var(--peach-deep));
+  padding: 5px 16px;
+  border-radius: 999px;
+  margin-bottom: 18px;
+}
+.step__icon {
+  display: block;
+  font-size: 46px;
+  margin-bottom: 14px;
+}
+.step__text {
+  font-size: 16px;
+  font-weight: 700;
+}
+.steps__btns {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 380px;
+  margin-inline: auto;
+}
+
+/* ============ ⑧ ラストCTA ============ */
+.last-cta {
+  padding: 90px 0 100px;
+  text-align: center;
+  background:
+    radial-gradient(120% 90% at 50% 100%, var(--pink) 0%, transparent 55%),
+    var(--cream);
+}
+.last-cta__note {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--peach-deep);
+  margin-bottom: 14px;
+}
+.last-cta__title {
+  font-family: "Shippori Mincho B1", serif;
+  font-size: clamp(28px, 7vw, 44px);
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 36px;
+}
+
+/* ============ フッター ============ */
+.footer {
+  background: linear-gradient(135deg, var(--peach), var(--peach-deep));
+  color: var(--white);
+  text-align: center;
+  padding: 40px 24px;
+}
+.footer__logo {
+  font-family: "Shippori Mincho B1", serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+.footer__logo span {
+  opacity: 0.85;
+}
+.footer__copy {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* ============ 追従CTA ============ */
+.float-cta {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 90;
+  background: linear-gradient(135deg, var(--peach), var(--peach-deep));
+  color: var(--white);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 15px 28px;
+  border-radius: 999px;
+  box-shadow: 0 10px 26px rgba(255, 110, 90, 0.4);
+  white-space: nowrap;
+  display: none;
+}
+
+/* ============ レスポンシブ ============ */
+@media (max-width: 768px) {
+  .sp-only {
+    display: inline;
+  }
+  .product__inner {
+    flex-direction: column;
+    gap: 32px;
+  }
+  .product__visual {
+    width: min(78%, 320px);
+    flex: none;
+  }
+  .product__body {
+    text-align: center;
+  }
+  .steps__list {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .step {
+    max-width: 360px;
+    width: 100%;
+  }
+  .float-cta {
+    display: inline-block;
+  }
+  .header__cta {
+    display: none;
+  }
+  /* 追従CTAと被らないよう余白 */
+  .last-cta {
+    padding-bottom: 120px;
+  }
+}
+
+@media (min-width: 769px) {
+  .hero__btns {
+    flex-direction: row;
+    justify-content: center;
+    max-width: none;
+  }
+  .hero__btns .btn {
+    min-width: 260px;
+  }
+  .steps__btns {
+    flex-direction: row;
+    justify-content: center;
+    max-width: none;
+  }
+}

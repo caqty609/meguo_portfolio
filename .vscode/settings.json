@@ -4,5 +4,7 @@
   "emmet.includeLanguages": {
     "html": "html"
   },
-  "editor.tabCompletion": "off"
+  "editor.tabCompletion": "off",
+  "editor.inlineSuggest.enabled": false,
+  "github.copilot.inlineSuggest.enable": false
 }

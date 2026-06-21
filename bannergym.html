@@ -3,138 +3,182 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BannerGym（デモ）｜デザインの筋トレアプリ</title>
+    <title>BannerGym｜デザインの筋トレアプリ</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
       :root {
-        --peach: #ff7a98;
-        --peach-deep: #eb153f;
-        --cream: #fff5f1;
-        --ink: #5d4037;
-        --sub: #8d6e63;
-        --line: #f0d9d2;
+        --bg1: #f4f6fc;
+        --bg2: #e9edf8;
+        --ink: #232838;
+        --sub: #6b7280;
+        --primary: #4f5dd6;
+        --primary2: #7b5ee0;
+        --accent: #ff6b4a;
+        --accent-soft: #fff1ec;
+        --line: #e6e8f2;
+        --card: #ffffff;
+        --lv1: #1fae74;
+        --lv2: #f0a020;
+        --lv3: #ef5b5b;
+        --lv4: #8b5cf6;
       }
       * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
       body {
         margin: 0;
-        font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
-        background: linear-gradient(160deg, #fff5f1 0%, #ffe9ef 100%);
+        font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", system-ui, -apple-system, sans-serif;
         color: var(--ink);
+        font-size: 15.5px;
+        line-height: 1.6;
+        background: var(--bg1);
         min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
       }
-      .app { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
-      header.top { text-align: center; padding: 14px 0 6px; }
-      header.top h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
-      header.top h1 span { color: var(--peach-deep); }
-      header.top p { margin: 4px 0 0; font-size: 12px; color: var(--sub); }
-      .stats {
-        display: flex; gap: 10px; margin: 14px 0; justify-content: center; flex-wrap: wrap;
+      /* 背景の装飾ブロブ */
+      body::before, body::after {
+        content: ""; position: fixed; border-radius: 50%; filter: blur(70px); opacity: .35; z-index: 0;
       }
+      body::before { width: 360px; height: 360px; background: #b9c2ff; top: -120px; right: -100px; }
+      body::after { width: 320px; height: 320px; background: #ffc7b8; bottom: -120px; left: -110px; }
+      .app { max-width: 740px; margin: 0 auto; padding: 18px 16px 70px; position: relative; z-index: 1; }
+
+      header.top {
+        text-align: center; padding: 18px 16px; margin-bottom: 16px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
+        border-radius: 22px; color: #fff; box-shadow: 0 12px 30px rgba(79,93,214,.3);
+        position: relative; overflow: hidden;
+      }
+      header.top::after {
+        content: ""; position: absolute; width: 180px; height: 180px; border-radius: 50%;
+        background: rgba(255,255,255,.12); top: -60px; right: -40px;
+      }
+      header.top h1 { margin: 0; font-size: 24px; letter-spacing: 1px; font-weight: 800; }
+      header.top p { margin: 5px 0 0; font-size: 12.5px; opacity: .92; }
+
+      .stats { display: flex; gap: 10px; margin: 0 0 18px; justify-content: center; flex-wrap: wrap; }
       .chip {
-        background: #fff; border: 1px solid var(--line); border-radius: 999px;
-        padding: 6px 14px; font-size: 13px; box-shadow: 0 2px 6px rgba(235,21,63,.05);
+        background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+        padding: 8px 16px; font-size: 13px; box-shadow: 0 4px 12px rgba(35,40,56,.05);
+        display: flex; align-items: center; gap: 6px;
       }
-      .chip b { color: var(--peach-deep); }
+      .chip b { color: var(--primary); font-size: 15px; }
+
       .card {
-        background: #fff; border-radius: 20px; padding: 22px;
-        box-shadow: 0 8px 24px rgba(235,21,63,.08); border: 1px solid var(--line);
-        margin-bottom: 16px;
+        background: var(--card); border-radius: 22px; padding: 24px;
+        box-shadow: 0 10px 30px rgba(35,40,56,.07); border: 1px solid var(--line); margin-bottom: 16px;
       }
-      .screen { display: none; animation: fade .4s ease; }
-      .screen.active { display: block; }
-      @keyframes fade { from { opacity: 0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+      .screen { display: none; }
+      .screen.active { display: block; animation: fade .45s cubic-bezier(.2,.7,.3,1); }
+      @keyframes fade { from { opacity: 0; transform: translateY(12px);} to {opacity:1; transform:none;} }
+
       .btn {
-        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-        background: var(--peach); color: #fff; border: none; border-radius: 999px;
-        padding: 14px 22px; font-size: 15px; font-weight: 700; cursor: pointer;
-        box-shadow: 0 6px 16px rgba(255,122,152,.4); transition: transform .1s, filter .2s;
-        width: 100%;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        background: linear-gradient(135deg, var(--primary), var(--primary2)); color: #fff; border: none;
+        border-radius: 14px; padding: 16px 22px; font-size: 16px; font-weight: 700; cursor: pointer;
+        box-shadow: 0 8px 20px rgba(79,93,214,.35); transition: transform .12s, box-shadow .2s, filter .2s; width: 100%;
       }
-      .btn:hover { filter: brightness(1.05); }
+      .btn:hover { filter: brightness(1.06); box-shadow: 0 10px 26px rgba(79,93,214,.45); }
       .btn:active { transform: scale(.98); }
-      .btn.ghost { background: #fff; color: var(--peach-deep); border: 2px solid var(--peach); box-shadow: none; }
+      .btn.accent { background: linear-gradient(135deg, #ff7a59, #ff5277); box-shadow: 0 8px 20px rgba(255,82,119,.35); }
+      .btn.ghost { background: #fff; color: var(--primary); border: 2px solid var(--line); box-shadow: none; }
+      .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+
       .msg {
-        background: var(--cream); border-radius: 16px 16px 16px 4px; padding: 14px 16px;
-        font-size: 14px; line-height: 1.7; border: 1px solid var(--line);
+        background: linear-gradient(135deg, #f0f3ff, #f7f4ff); border-radius: 16px 16px 16px 4px;
+        padding: 16px 18px; font-size: 14.5px; line-height: 1.75; border: 1px solid #e6e9fb;
       }
-      .msg .who { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
-      .level-badge {
-        display: inline-block; font-size: 11px; font-weight: 700; color: #fff;
-        background: var(--peach-deep); border-radius: 6px; padding: 2px 8px; margin-right: 6px;
+      .msg .who { font-size: 12px; color: var(--primary); font-weight: 700; margin-bottom: 5px; }
+
+      .level-badge { display: inline-block; font-size: 11px; font-weight: 800; color: #fff; border-radius: 8px; padding: 3px 9px; margin-right: 8px; vertical-align: middle; }
+      .lv1 { background: var(--lv1); } .lv2 { background: var(--lv2); } .lv3 { background: var(--lv3); } .lv4 { background: var(--lv4); }
+
+      .size-pill {
+        display: inline-flex; align-items: center; gap: 5px; background: var(--ink); color: #fff;
+        font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 999px; margin: 10px 0 2px;
       }
-      .level-badge.lv1 { background: #4caf50; }
-      .level-badge.lv2 { background: #ff9800; }
-      .level-badge.lv3 { background: #ff5722; }
-      .level-badge.lv4 { background: #9c27b0; }
-      h2.odai-title { font-size: 19px; margin: 14px 0 6px; }
-      table.brief { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; }
-      table.brief th, table.brief td { text-align: left; vertical-align: top; padding: 7px 6px; border-bottom: 1px solid var(--line); }
-      table.brief th { color: var(--sub); white-space: nowrap; width: 36%; font-weight: 600; }
-      .must { color: var(--peach-deep); font-weight: 700; }
+      h2.odai-title { font-size: 20px; margin: 14px 0 4px; line-height: 1.4; }
+
+      table.brief { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 12px; }
+      table.brief th, table.brief td { text-align: left; vertical-align: top; padding: 9px 6px; border-bottom: 1px solid var(--line); }
+      table.brief th { color: var(--sub); white-space: nowrap; width: 34%; font-weight: 600; }
+      .must { color: var(--accent); font-weight: 700; }
+
       .upload-area {
-        border: 2px dashed var(--peach); border-radius: 16px; padding: 26px; text-align: center;
-        background: var(--cream); cursor: pointer; color: var(--sub); font-size: 14px; margin: 14px 0;
+        border: 2px dashed #c3c9e8; border-radius: 16px; padding: 28px; text-align: center;
+        background: #f7f8fe; cursor: pointer; color: var(--sub); font-size: 14px; margin: 14px 0; transition: border-color .2s, background .2s;
       }
-      .upload-area img { max-width: 100%; max-height: 260px; border-radius: 10px; margin-top: 8px; }
-      .loading { text-align: center; padding: 40px 0; }
-      .spinner {
-        width: 54px; height: 54px; border: 5px solid var(--line); border-top-color: var(--peach);
-        border-radius: 50%; margin: 0 auto 18px; animation: spin 1s linear infinite;
-      }
+      .upload-area:hover { border-color: var(--primary); background: #f0f3ff; }
+      .upload-area img { max-width: 100%; max-height: 280px; border-radius: 12px; margin-top: 10px; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+
+      .loading { text-align: center; padding: 46px 0; }
+      .spinner { width: 58px; height: 58px; border: 5px solid var(--line); border-top-color: var(--primary); border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite; }
       @keyframes spin { to { transform: rotate(360deg); } }
-      .score-big { text-align: center; }
-      .score-big .num { font-size: 56px; font-weight: 800; color: var(--peach-deep); line-height: 1; }
-      .score-big .num small { font-size: 20px; color: var(--sub); }
-      .review { background: var(--cream); border-radius: 16px 16px 4px 16px; padding: 14px 16px; font-size: 14px; line-height: 1.7; margin: 12px 0; }
-      .review .who { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
-      .item { padding: 10px 0; border-bottom: 1px solid var(--line); }
+
+      .score-big { text-align: center; padding: 6px 0 4px; }
+      .score-ring { position: relative; width: 150px; height: 150px; margin: 0 auto; }
+      .score-ring svg { transform: rotate(-90deg); }
+      .score-ring .num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .score-ring .num b { font-size: 46px; font-weight: 800; color: var(--ink); line-height: 1; }
+      .score-ring .num small { font-size: 13px; color: var(--sub); }
+      .score-rank-label { font-size: 14px; color: var(--sub); margin-top: 10px; font-weight: 600; }
+
+      .review { background: var(--accent-soft); border-radius: 16px 16px 4px 16px; padding: 16px 18px; font-size: 14.5px; line-height: 1.75; margin: 16px 0; border: 1px solid #ffe1d7; }
+      .review .who { font-size: 12px; color: var(--accent); font-weight: 700; margin-bottom: 5px; }
+
+      .item { padding: 12px 0; border-bottom: 1px solid var(--line); }
       .item .row { display: flex; justify-content: space-between; align-items: center; }
-      .item .name { font-weight: 700; font-size: 14px; }
-      .item .sc { font-weight: 800; color: var(--peach-deep); }
-      .item .cm { font-size: 13px; color: var(--sub); margin-top: 4px; line-height: 1.6; }
-      .bar { height: 6px; background: var(--line); border-radius: 999px; margin-top: 6px; overflow: hidden; }
-      .bar > div { height: 100%; background: var(--peach); border-radius: 999px; transition: width .8s ease; }
-      .checks { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
-      .check { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: #f1f8e9; color: #558b2f; }
-      .check.ng { background: #ffebee; color: #c62828; }
-      .priority { background: #fff8e1; border-left: 4px solid #ffb300; padding: 12px 14px; border-radius: 8px; font-size: 13.5px; line-height: 1.6; margin: 10px 0; }
-      .reco { background: #ede7f6; border-radius: 12px; padding: 14px; font-size: 13.5px; line-height: 1.6; margin-top: 8px; }
-      .demo-note { font-size: 11px; color: var(--sub); text-align: center; margin-top: 8px; }
-      .footer-note { text-align: center; font-size: 11px; color: var(--sub); margin-top: 20px; }
-      .toast {
-        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-        background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 999px;
-        font-size: 13px; opacity: 0; transition: opacity .3s; pointer-events: none;
-      }
-      .toast.show { opacity: .95; }
+      .item .name { font-weight: 700; font-size: 14.5px; }
+      .item .sc { font-weight: 800; color: var(--primary); font-size: 15px; }
+      .item .cm { font-size: 13.5px; color: var(--sub); margin-top: 5px; line-height: 1.6; }
+      .bar { height: 7px; background: var(--line); border-radius: 999px; margin-top: 7px; overflow: hidden; }
+      .bar > div { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary2)); border-radius: 999px; width: 0; transition: width .9s cubic-bezier(.2,.7,.3,1); }
+
+      .checks { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+      .check { font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: #e7f7ef; color: #138a5b; }
+      .check.ng { background: #fdeaea; color: #d23b3b; }
+
+      .priority { background: #fff8e8; border-left: 4px solid var(--lv2); padding: 14px 16px; border-radius: 10px; font-size: 14px; line-height: 1.65; margin: 14px 0; }
+      .reco { background: #f1eefe; border-left: 4px solid var(--lv4); padding: 14px 16px; border-radius: 10px; font-size: 14px; line-height: 1.65; margin-top: 10px; }
+
+      .section-label { font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+      .demo-note { font-size: 11.5px; color: var(--sub); text-align: center; margin-top: 12px; line-height: 1.5; }
+      .footer-note { text-align: center; font-size: 11.5px; color: var(--sub); margin-top: 22px; }
+
+      .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #fff; padding: 12px 22px; border-radius: 999px; font-size: 14px; font-weight: 600; opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; z-index: 50; box-shadow: 0 10px 24px rgba(0,0,0,.25); }
+      .toast.show { opacity: .97; transform: translateX(-50%) translateY(0); }
+
+      /* 紙吹雪 */
+      .confetti { position: fixed; top: -10px; width: 10px; height: 14px; z-index: 60; pointer-events: none; opacity: .9; }
+      @keyframes drop { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
     </style>
   </head>
   <body>
     <div class="app">
       <header class="top">
-        <h1>Banner<span>Gym</span> 🍑</h1>
-        <p>お題で鍛える、デザインの筋トレアプリ（デモ版）</p>
+        <h1>BannerGym</h1>
+        <p>お題で鍛える、デザインの筋トレアプリ</p>
       </header>
 
       <div class="stats">
-        <div class="chip">ランク：<b id="rankLabel">見習い</b></div>
-        <div class="chip">連続：<b id="streakLabel">0</b>日 🔥</div>
-        <div class="chip">挑戦：<b id="countLabel">0</b>本</div>
+        <div class="chip">🏅 ランク <b id="rankLabel">見習い</b></div>
+        <div class="chip">🔥 連続 <b id="streakLabel">0</b>日</div>
+        <div class="chip">🎯 挑戦 <b id="countLabel">0</b>本</div>
       </div>
 
       <!-- ホーム -->
       <section id="home" class="screen active">
         <div class="card">
           <div class="msg">
-            <div class="who">📩 クライアントからの新着メッセージ</div>
-            <div id="homeTeaser">こんにちは！新しいお仕事のご相談です。準備ができたら開いてください☺️</div>
+            <div class="who">📩 新着メッセージ</div>
+            <div>こんにちは！新しいお仕事のご相談です。準備ができたら受け取ってください。</div>
           </div>
-          <div style="height:16px"></div>
+          <div style="height:18px"></div>
           <button class="btn" onclick="openOdai()">📂 今日のお題を受け取る</button>
         </div>
         <div class="card" id="historyCard" style="display:none">
-          <b style="font-size:14px">📈 これまでの成長</b>
-          <canvas id="trendChart" height="160" style="margin-top:10px"></canvas>
+          <div class="section-label">📈 これまでの成長</div>
+          <canvas id="trendChart" height="160" style="margin-top:8px"></canvas>
         </div>
       </section>
 
@@ -145,19 +189,21 @@
             <div class="who">📩 <span id="clientName"></span> より</div>
             <div id="clientMsg"></div>
           </div>
-          <h2 class="odai-title">
-            <span id="lvBadge" class="level-badge">LV1</span><span id="odaiTitle"></span>
-          </h2>
+          <div style="margin-top:14px">
+            <span id="lvBadge" class="level-badge">LV1</span>
+            <span class="size-pill">📐 <span id="sizePill"></span></span>
+          </div>
+          <h2 class="odai-title" id="odaiTitle"></h2>
           <table class="brief" id="briefTable"></table>
         </div>
         <div class="card">
-          <b style="font-size:14px">✏️ 作品を提出する</b>
-          <p style="font-size:13px;color:var(--sub)">Canva / Figma などで作った画像をアップしてください。</p>
+          <div class="section-label">✏️ 作品を提出する</div>
+          <p style="font-size:13.5px;color:var(--sub);margin:4px 0 0">Canva / Figma などで作った画像をアップしてください。</p>
           <label class="upload-area" id="uploadArea">
             <input type="file" id="fileInput" accept="image/*" hidden />
-            <div id="uploadText">＋ クリックして画像をアップロード</div>
+            <div id="uploadText">📤 クリックして画像をアップロード</div>
           </label>
-          <button class="btn" id="submitBtn" onclick="submitWork()" disabled style="opacity:.5">提出して採点してもらう</button>
+          <button class="btn accent" id="submitBtn" onclick="submitWork()" disabled>提出して採点してもらう</button>
           <button class="btn ghost" onclick="go('home')" style="margin-top:10px">← もどる</button>
         </div>
       </section>
@@ -166,7 +212,7 @@
       <section id="scoring" class="screen">
         <div class="card loading">
           <div class="spinner"></div>
-          <div id="scoringMsg" style="font-size:15px">クライアントが作品を確認しています…</div>
+          <div id="scoringMsg" style="font-size:15.5px;font-weight:600">クライアントが作品を確認しています…</div>
         </div>
       </section>
 
@@ -174,14 +220,21 @@
       <section id="result" class="screen">
         <div class="card">
           <div class="score-big">
-            <div class="num"><span id="totalScore">0</span><small>点</small></div>
-            <div style="font-size:13px;color:var(--sub);margin-top:4px" id="scoreRank"></div>
+            <div class="score-ring">
+              <svg width="150" height="150">
+                <circle cx="75" cy="75" r="64" fill="none" stroke="#eef0f7" stroke-width="12" />
+                <circle id="ringFill" cx="75" cy="75" r="64" fill="none" stroke="url(#grad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="402" style="transition:stroke-dashoffset 1.1s cubic-bezier(.2,.7,.3,1)" />
+                <defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f5dd6"/><stop offset="1" stop-color="#7b5ee0"/></linearGradient></defs>
+              </svg>
+              <div class="num"><b id="totalScore">0</b><small>点 / 100</small></div>
+            </div>
+            <div class="score-rank-label" id="scoreRank"></div>
           </div>
           <div class="review">
             <div class="who">💬 <span id="reviewClient"></span> の感想</div>
             <div id="clientVoice"></div>
           </div>
-          <canvas id="radarChart" height="240"></canvas>
+          <canvas id="radarChart" height="250"></canvas>
           <div class="checks" id="checks"></div>
           <div id="items"></div>
           <div class="priority" id="priority"></div>
@@ -192,636 +245,390 @@
         <p class="demo-note">※ これはデモ版です。点数とコメントは仮のものです（本番ではAIが画像を見て採点します）。</p>
       </section>
 
-      <p class="footer-note">BannerGym prototype — made for design practice 🍑</p>
+      <p class="footer-note">BannerGym prototype — design practice for everyone</p>
     </div>
     <div class="toast" id="toast"></div>
 
     <script>
       /* =========================================================
-         お題データ（依頼書）
+         お題データ（依頼書）— 全年代・男女・多ジャンル＋サイズ指定
          本番ではAIが自動生成。デモは固定リストから出題。
       ========================================================= */
       const ODAI = [
         // ===== LV1 バナー =====
-        {
-          level: 1, lvName: "バナー", client: "PEACHY COFFEE 広報部",
-          msg: "夏の新作、いよいよ出します！果肉のごろっと感が伝わるバナーをお願いできますか？☺️",
-          title: 'ごろっと果肉の "白桃ラテ" 新登場バナー',
-          brief: {
-            "難易度": "易", "概要": "季節限定ドリンクの告知。果肉感と世界観を伝えるビジュアル重視",
-            "ターゲット": "20〜30代女性。インスタ映え・新作に敏感なカフェ好き", "サービス名": "PEACHY COFFEE",
-            "キャッチコピー": "まるごと白桃ラテ、新登場！", "サブテキスト": "果肉たっぷり。とろける甘さにうっとり。",
-            "CTAボタン": "今だけの限定メニューをチェック！", "テーマカラー": "ピンク・白", "印象": "ジューシー・みずみずしい・かわいい",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "BEAT GYM 運営",
-          msg: "夏前の入会キャンペーン、勝負のバナーです！背中を押す一枚を頼みます💪",
-          title: "夏まであと90日｜入会キャンペーンバナー",
-          brief: {
-            "難易度": "易", "概要": "夏前の入会キャンペーン告知。行動を後押しする力強い構成",
-            "ターゲット": "20〜40代、運動初心者", "サービス名": "BEAT GYM",
-            "キャッチコピー": "夏まで、あと90日。", "サブテキスト": "今日の一歩が、未来の自分をつくる。",
-            "CTAボタン": "無料体験を予約する", "テーマカラー": "ブラック・ネオンイエロー", "印象": "力強い・スピード感・本気",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "LUMINA コスメ",
-          msg: "新作リップの発売バナーです。ツヤと血色感が伝わる、おしゃれな一枚を♡",
-          title: "新作ティントリップ 発売バナー",
-          brief: {
-            "難易度": "易", "概要": "新作リップの発売告知。質感と高見えを訴求",
-            "ターゲット": "20代女性、トレンドに敏感", "サービス名": "LUMINA",
-            "キャッチコピー": "塗った瞬間、私が好きになる。", "サブテキスト": "全6色・するんと続くツヤ発色。",
-            "CTAボタン": "新色をチェック", "テーマカラー": "ヌーディーベージュ・くすみピンク", "印象": "上品・大人かわいい・ツヤ",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "暮らしのマルシェ（EC）",
-          msg: "夏のタイムセール、開催します！お得感がパッと伝わるバナーを大至急〜！",
-          title: "夏の大感謝タイムセール バナー",
-          brief: {
-            "難易度": "易", "概要": "期間限定セールの告知。お得感・限定感を最大化",
-            "ターゲット": "30〜40代、節約志向の主婦層", "サービス名": "暮らしのマルシェ",
-            "キャッチコピー": "今日だけ、全品20%OFF。", "サブテキスト": "暮らしを彩る雑貨が、お得に。",
-            "CTAボタン": "セール会場へ", "テーマカラー": "赤・白・黄", "印象": "賑やか・お得・スピード感",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "コードの森（スクール）",
-          msg: "無料説明会の集客バナーです。未経験でも安心、が伝わると嬉しいです！",
-          title: "プログラミングスクール 無料説明会バナー",
-          brief: {
-            "難易度": "中", "概要": "無料説明会への申込促進。未経験者の不安を払拭",
-            "ターゲット": "20〜30代、転職を考える未経験者", "サービス名": "コードの森",
-            "キャッチコピー": "未経験から、3ヶ月でエンジニア。", "サブテキスト": "現役講師がマンツーマンで伴走。",
-            "CTAボタン": "無料説明会に申し込む", "テーマカラー": "ネイビー・グリーン", "印象": "信頼・前向き・誠実",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "旅ことり",
-          msg: "週末ひとり旅の特集バナーです。ふらっと行きたくなる空気感でお願いします✈️",
-          title: "週末ひとり旅 特集バナー",
-          brief: {
-            "難易度": "易", "概要": "ひとり旅特集ページへの誘導。非日常への憧れを喚起",
-            "ターゲット": "20〜30代、自由な時間を求める社会人", "サービス名": "旅ことり",
-            "キャッチコピー": "金曜の夜、ふと旅に出る。", "サブテキスト": "週末で行ける、ひとり旅特集。",
-            "CTAボタン": "特集を見る", "テーマカラー": "空色・白・ベージュ", "印象": "開放感・自由・静けさ",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "BLOOM CAFE（採用）",
-          msg: "スタッフ募集のバナーです！働く楽しさが伝わって、応募したくなる感じに🌿",
-          title: "カフェスタッフ募集 採用バナー",
-          brief: {
-            "難易度": "中", "概要": "アルバイト採用の応募促進。職場の雰囲気の良さを訴求",
-            "ターゲット": "学生・フリーター、カフェ好き", "サービス名": "BLOOM CAFE",
-            "キャッチコピー": "「いらっしゃいませ」が、好きになる。", "サブテキスト": "未経験歓迎・週2日〜OK。",
-            "CTAボタン": "募集要項を見る", "テーマカラー": "白・木目ブラウン・緑", "印象": "あたたかい・親しみ・自然体",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "MODE LIB（アパレル）",
-          msg: "秋の新作コレクションのバナーです。大人っぽく、洗練された雰囲気で。",
-          title: "秋の新作コレクション バナー",
-          brief: {
-            "難易度": "中", "概要": "秋物新作の訴求。トレンド感と上質さを両立",
-            "ターゲット": "30代女性、きれいめ志向", "サービス名": "MODE LIB",
-            "キャッチコピー": "秋は、少し大人になる。", "サブテキスト": "New Autumn Collection",
-            "CTAボタン": "新作を見る", "テーマカラー": "ベージュ・ブラウン・黒", "印象": "洗練・上質・落ち着き",
-          },
-          must: ["キャッチコピー", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "わんにゃん保険",
-          msg: "ペット保険の資料請求バナーです。大切な家族を守る安心感を伝えたいです🐶",
-          title: "ペット保険 資料請求バナー",
-          brief: {
-            "難易度": "中", "概要": "ペット保険の資料請求促進。万一への備えと安心を訴求",
-            "ターゲット": "ペットを飼う30〜50代", "サービス名": "わんにゃん保険",
-            "キャッチコピー": "もしもの時、迷わないために。", "サブテキスト": "月々1,500円〜、通院もカバー。",
-            "CTAボタン": "無料で資料請求", "テーマカラー": "オレンジ・白・茶", "印象": "あたたかい・安心・誠実",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "さくら証券",
-          msg: "つみたてNISAの口座開設バナーです。初心者でも始めやすい安心感を。",
-          title: "つみたてNISA 口座開設バナー",
-          brief: {
-            "難易度": "中", "概要": "NISA口座開設の促進。初心者の心理的ハードルを下げる",
-            "ターゲット": "20〜30代、投資未経験", "サービス名": "さくら証券",
-            "キャッチコピー": "はじめての資産運用、応援します。", "サブテキスト": "100円から、コツコツ未来づくり。",
-            "CTAボタン": "口座開設はこちら", "テーマカラー": "青・白・桜ピンク", "印象": "信頼・誠実・やさしい",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "夏音祭（音楽フェス）",
-          msg: "夏フェスの告知バナーです！ワクワクが爆発する、勢いのある一枚を🎸",
-          title: "野外音楽フェス 開催告知バナー",
-          brief: {
-            "難易度": "中", "概要": "夏フェスの開催・チケット告知。高揚感と勢いを最大化",
-            "ターゲット": "10〜20代、音楽好き", "サービス名": "夏音祭 -NATSUNE-",
-            "キャッチコピー": "この夏、いちばん熱くなる2日間。", "サブテキスト": "8/10-11 海辺の特設ステージ",
-            "CTAボタン": "チケットを取る", "テーマカラー": "ビビッドピンク・オレンジ・青", "印象": "高揚・勢い・非日常",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "朝採れ便（食品）",
-          msg: "産直野菜の定期便バナーです。新鮮さ・美味しそうな感じが伝わると◎",
-          title: "産直野菜の定期便 バナー",
-          brief: {
-            "難易度": "易", "概要": "野菜定期便の新規申込促進。鮮度とおいしさを訴求",
-            "ターゲット": "30〜40代、食にこだわる家庭", "サービス名": "朝採れ便",
-            "キャッチコピー": "畑から、まっすぐ食卓へ。", "サブテキスト": "朝採れ野菜が、翌日とどく。",
-            "CTAボタン": "初回50%OFFで試す", "テーマカラー": "緑・白・土のブラウン", "印象": "新鮮・素朴・健康的",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 1, lvName: "バナー", client: "ねむり手帳（アプリ）",
-          msg: "睡眠記録アプリのDL訴求バナーです。やさしく眠りに誘う雰囲気で🌙",
-          title: "睡眠記録アプリ ダウンロード訴求バナー",
-          brief: {
-            "難易度": "中", "概要": "アプリのインストール促進。睡眠改善のベネフィットを訴求",
-            "ターゲット": "20〜40代、睡眠の質に悩む人", "サービス名": "ねむり手帳",
-            "キャッチコピー": "眠りを記録すると、朝が変わる。", "サブテキスト": "つけるだけ。あなたの眠りを見える化。",
-            "CTAボタン": "無料でダウンロード", "テーマカラー": "ネイビー・白・淡い紫", "印象": "穏やか・上質・安心",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
+        { level:1, lvName:"バナー", client:"PEACHY COFFEE 広報部",
+          msg:"夏の新作、いよいよ出します！果肉のごろっと感が伝わるバナーをお願いできますか？",
+          title:'ごろっと果肉の "白桃ラテ" 新登場バナー',
+          brief:{ "サイズ":"1080×1080px（SNS正方形）","難易度":"易","概要":"季節限定ドリンクの告知。果肉感と世界観重視","ターゲット":"20〜30代女性。新作に敏感なカフェ好き","サービス名":"PEACHY COFFEE","キャッチコピー":"まるごと白桃ラテ、新登場！","サブテキスト":"果肉たっぷり。とろける甘さにうっとり。","CTAボタン":"今だけの限定メニューをチェック！","テーマカラー":"ピンク・白","印象":"ジューシー・みずみずしい・かわいい" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"BEAT GYM 運営",
+          msg:"夏前の入会キャンペーン、勝負のバナーです！背中を押す一枚を頼みます。",
+          title:"夏まであと90日｜入会キャンペーンバナー",
+          brief:{ "サイズ":"1200×628px（横長ディスプレイ広告）","難易度":"易","概要":"入会キャンペーン告知。行動を後押しする力強い構成","ターゲット":"20〜40代男女、運動初心者","サービス名":"BEAT GYM","キャッチコピー":"夏まで、あと90日。","サブテキスト":"今日の一歩が、未来の自分をつくる。","CTAボタン":"無料体験を予約する","テーマカラー":"ブラック・ネオンイエロー","印象":"力強い・スピード感・本気" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"健寿堂（健康食品）",
+          msg:"シニアの方に向けた健康サプリのバナーです。安心感と、毎日の元気を伝えたいです。",
+          title:"シニア向け健康サプリ 訴求バナー",
+          brief:{ "サイズ":"1200×628px（横長）","難易度":"易","概要":"健康サプリの定期購入促進。読みやすさ最優先","ターゲット":"60〜70代、健康志向のシニア","サービス名":"健寿堂 -歩みサポート-","キャッチコピー":"毎日を、軽やかに歩こう。","サブテキスト":"ひざ・腰の毎日に。続けやすい一日2粒。","CTAボタン":"初回半額で試す","テーマカラー":"深緑・白・金","印象":"信頼・安心・健やか（大きな文字で）" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"市民総合病院",
+          msg:"人間ドックの受診案内バナーです。働き盛りの方に、健康の大切さを伝えたいです。",
+          title:"人間ドック 受診案内バナー",
+          brief:{ "サイズ":"1200×628px（横長）","難易度":"中","概要":"健診の予約促進。信頼感と受けやすさを訴求","ターゲット":"40〜60代男女、働き盛り","サービス名":"市民総合病院 健診センター","キャッチコピー":"元気な毎日は、年に一度の検査から。","サブテキスト":"半日コース・予約はWebで簡単。","CTAボタン":"WEBで予約する","テーマカラー":"青・白・グレー","印象":"清潔・信頼・誠実" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"GRIT メンズグルーミング",
+          msg:"メンズスキンケアの新商品バナーです。男性が手に取りやすい、洗練された感じで。",
+          title:"メンズスキンケア 新商品バナー",
+          brief:{ "サイズ":"1080×1080px（SNS正方形）","難易度":"中","概要":"男性向けスキンケアの認知・購入促進","ターゲット":"20〜40代男性、清潔感を意識","サービス名":"GRIT","キャッチコピー":"清潔感は、最強の武器だ。","サブテキスト":"洗う・整える、これ一本。","CTAボタン":"詳しく見る","テーマカラー":"チャコール・白・ブルーグレー","印象":"クール・洗練・無駄がない" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"LUMINA コスメ",
+          msg:"新作リップの発売バナーです。ツヤと血色感が伝わる、おしゃれな一枚を。",
+          title:"新作ティントリップ 発売バナー",
+          brief:{ "サイズ":"1080×1350px（SNS縦長）","難易度":"易","概要":"新作リップの発売告知。質感と高見えを訴求","ターゲット":"20代女性、トレンドに敏感","サービス名":"LUMINA","キャッチコピー":"塗った瞬間、私が好きになる。","サブテキスト":"全6色・するんと続くツヤ発色。","CTAボタン":"新色をチェック","テーマカラー":"ヌーディーベージュ・くすみピンク","印象":"上品・大人かわいい・ツヤ" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"暮らしのマルシェ（EC）",
+          msg:"夏のタイムセール、開催します！お得感がパッと伝わるバナーを大至急で！",
+          title:"夏の大感謝タイムセール バナー",
+          brief:{ "サイズ":"728×90px（横長バナー）","難易度":"中","概要":"期間限定セールの告知。狭い横長で要点を伝える","ターゲット":"30〜40代、節約志向","サービス名":"暮らしのマルシェ","キャッチコピー":"今日だけ、全品20%OFF。","サブテキスト":"暮らしを彩る雑貨が、お得に。","CTAボタン":"セール会場へ","テーマカラー":"赤・白・黄","印象":"賑やか・お得・スピード感" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"コードの森（スクール）",
+          msg:"無料説明会の集客バナーです。未経験でも安心、が伝わると嬉しいです。",
+          title:"プログラミングスクール 無料説明会バナー",
+          brief:{ "サイズ":"1200×628px（横長）","難易度":"中","概要":"無料説明会への申込促進。未経験者の不安を払拭","ターゲット":"20〜30代男女、転職を考える未経験者","サービス名":"コードの森","キャッチコピー":"未経験から、3ヶ月でエンジニア。","サブテキスト":"現役講師がマンツーマンで伴走。","CTAボタン":"無料説明会に申し込む","テーマカラー":"ネイビー・グリーン","印象":"信頼・前向き・誠実" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"大人の休日クラブ",
+          msg:"シニア向けの旅行プランのバナーです。ゆったりした上質な時間を感じさせたいです。",
+          title:"シニア向け ゆったり温泉旅バナー",
+          brief:{ "サイズ":"1200×628px（横長）","難易度":"中","概要":"シニア向け旅行プランの訴求。ゆとり・上質感","ターゲット":"60〜70代夫婦","サービス名":"大人の休日クラブ","キャッチコピー":"今だから、ゆっくり旅をしよう。","サブテキスト":"少人数・添乗員つきで安心の温泉旅。","CTAボタン":"プランを見る","テーマカラー":"えんじ・生成り・金","印象":"上質・落ち着き・安心（読みやすい大きさ）" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"わんにゃん保険",
+          msg:"ペット保険の資料請求バナーです。大切な家族を守る安心感を伝えたいです。",
+          title:"ペット保険 資料請求バナー",
+          brief:{ "サイズ":"300×250px（レクタングル）","難易度":"中","概要":"資料請求の促進。小さめ枠で要点を凝縮","ターゲット":"ペットを飼う30〜50代男女","サービス名":"わんにゃん保険","キャッチコピー":"もしもの時、迷わないために。","サブテキスト":"月々1,500円〜、通院もカバー。","CTAボタン":"無料で資料請求","テーマカラー":"オレンジ・白・茶","印象":"あたたかい・安心・誠実" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"FUJI GOLF",
+          msg:"ゴルフ用品セールのバナーです。週末ゴルファーが思わず見たくなる感じで！",
+          title:"ゴルフ用品 週末セールバナー",
+          brief:{ "サイズ":"1200×628px（横長）","難易度":"易","概要":"用品セールの告知。スコアアップ欲求を刺激","ターゲット":"30〜60代男性、週末ゴルファー","サービス名":"FUJI GOLF","キャッチコピー":"スコアは、道具で変わる。","サブテキスト":"人気クラブが最大40%OFF。","CTAボタン":"セール品を見る","テーマカラー":"濃緑・白・ゴールド","印象":"本格・信頼・スポーティ" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"朝採れ便（食品）",
+          msg:"産直野菜の定期便バナーです。新鮮さ・美味しそうな感じが伝わると◎",
+          title:"産直野菜の定期便 バナー",
+          brief:{ "サイズ":"1080×1080px（SNS正方形）","難易度":"易","概要":"定期便の新規申込促進。鮮度を訴求","ターゲット":"30〜50代、食にこだわる家庭","サービス名":"朝採れ便","キャッチコピー":"畑から、まっすぐ食卓へ。","サブテキスト":"朝採れ野菜が、翌日とどく。","CTAボタン":"初回50%OFFで試す","テーマカラー":"緑・白・土のブラウン","印象":"新鮮・素朴・健康的" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:1, lvName:"バナー", client:"夏音祭（音楽フェス）",
+          msg:"夏フェスの告知バナーです！ワクワクが爆発する、勢いのある一枚を。",
+          title:"野外音楽フェス 開催告知バナー",
+          brief:{ "サイズ":"1080×1080px（SNS正方形）","難易度":"中","概要":"フェス開催・チケット告知。高揚感を最大化","ターゲット":"10〜30代男女、音楽好き","サービス名":"夏音祭 -NATSUNE-","キャッチコピー":"この夏、いちばん熱くなる2日間。","サブテキスト":"8/10-11 海辺の特設ステージ","CTAボタン":"チケットを取る","テーマカラー":"ビビッドピンク・オレンジ・青","印象":"高揚・勢い・非日常" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
 
         // ===== LV2 サムネ =====
-        {
-          level: 2, lvName: "サムネ", client: "ヨゾラGAMES",
-          msg: "新作ホラゲの実況サムネです。思わずクリックしたくなる怖さ、出せますか…？👻",
-          title: "深夜実況ホラーゲーム｜YouTubeサムネ",
-          brief: {
-            "難易度": "中", "概要": "ホラーゲーム実況のサムネ。一瞬で目を引く・クリックさせる",
-            "ターゲット": "10〜20代ゲーム好き", "サービス名": "ヨゾラGAMES",
-            "キャッチコピー": "深夜にやるんじゃなかった。", "サブテキスト": "新作ホラー、初見プレイ",
-            "CTAボタン": "（サムネ内に「衝撃のラスト」など煽り文）", "テーマカラー": "黒・血のような赤", "印象": "恐怖・緊張・好奇心",
-          },
-          must: ["キャッチコピー", "テーマカラー"],
-        },
-        {
-          level: 2, lvName: "サムネ", client: "ずぼら飯研究所",
-          msg: "10分丼レシピ動画のサムネです。美味しそう＆簡単そう、が伝わるように🍚",
-          title: "時短レシピ動画｜YouTubeサムネ",
-          brief: {
-            "難易度": "易", "概要": "時短レシピ動画のサムネ。シズル感と手軽さを訴求",
-            "ターゲット": "20〜30代、忙しい一人暮らし", "サービス名": "ずぼら飯研究所",
-            "キャッチコピー": "10分で、優勝。", "サブテキスト": "包丁いらずの爆速丼",
-            "CTAボタン": "（サムネ内に料理写真を大きく）", "テーマカラー": "赤・黄・白", "印象": "美味しそう・親しみ・お手軽",
-          },
-          must: ["キャッチコピー", "テーマカラー"],
-        },
-        {
-          level: 2, lvName: "サムネ", client: "マネー大学",
-          msg: "新NISA解説動画のサムネです。信頼感がありつつ、見たくなる感じで！",
-          title: "新NISA解説動画｜YouTubeサムネ",
-          brief: {
-            "難易度": "中", "概要": "投資解説動画のサムネ。信頼感とわかりやすさ、ちょい煽り",
-            "ターゲット": "20〜40代、投資初心者", "サービス名": "マネー大学",
-            "キャッチコピー": "新NISA、結局これだけやればいい。", "サブテキスト": "知らないと損する5つのこと",
-            "CTAボタン": "（サムネ内に人物＋図解）", "テーマカラー": "紺・黄・白", "印象": "信頼・明快・ちょい煽り",
-          },
-          must: ["キャッチコピー", "テーマカラー"],
-        },
-        {
-          level: 2, lvName: "サムネ", client: "コスメレビューちゃんねる",
-          msg: "プチプラ vs デパコス比較動画のサムネです。どっち派？と思わせたい💄",
-          title: "コスメ比較動画｜YouTubeサムネ",
-          brief: {
-            "難易度": "中", "概要": "比較レビュー動画のサムネ。対決構図で興味を引く",
-            "ターゲット": "10〜30代女性、コスメ好き", "サービス名": "コスメレビューちゃんねる",
-            "キャッチコピー": "プチプラ vs デパコス、ガチ比較。", "サブテキスト": "結果に正直、驚きました",
-            "CTAボタン": "（サムネ内に2商品を対比配置）", "テーマカラー": "ピンク・白・ゴールド", "印象": "わくわく・対決・かわいい",
-          },
-          must: ["キャッチコピー", "テーマカラー"],
-        },
-        {
-          level: 2, lvName: "サムネ", client: "ふらり旅Vlog",
-          msg: "京都ひとり旅Vlogのサムネです。エモくて、行きたくなる雰囲気で🍁",
-          title: "京都ひとり旅Vlog｜YouTubeサムネ",
-          brief: {
-            "難易度": "易", "概要": "旅Vlogのサムネ。情緒・憧れで再生を誘う",
-            "ターゲット": "20〜30代、旅・癒し好き", "サービス名": "ふらり旅Vlog",
-            "キャッチコピー": "ひとりの京都は、贅沢だった。", "サブテキスト": "秋の朝、誰もいない寺院",
-            "CTAボタン": "（サムネ内に風景写真を大きく）", "テーマカラー": "和の朱・墨・生成り", "印象": "情緒・静けさ・憧れ",
-          },
-          must: ["キャッチコピー", "テーマカラー"],
-        },
+        { level:2, lvName:"サムネ", client:"ヨゾラGAMES",
+          msg:"新作ホラゲの実況サムネです。思わずクリックしたくなる怖さ、出せますか…？",
+          title:"深夜実況ホラーゲーム｜YouTubeサムネ",
+          brief:{ "サイズ":"1280×720px（YouTube）","難易度":"中","概要":"ホラー実況のサムネ。一瞬で目を引く・クリックさせる","ターゲット":"10〜20代男女、ゲーム好き","サービス名":"ヨゾラGAMES","キャッチコピー":"深夜にやるんじゃなかった。","サブテキスト":"新作ホラー、初見プレイ","CTAボタン":"（サムネ内に「衝撃のラスト」など煽り）","テーマカラー":"黒・血のような赤","印象":"恐怖・緊張・好奇心" },
+          must:["キャッチコピー","テーマカラー","サイズ"] },
+
+        { level:2, lvName:"サムネ", client:"ずぼら飯研究所",
+          msg:"10分丼レシピ動画のサムネです。美味しそう＆簡単そう、が伝わるように。",
+          title:"時短レシピ動画｜YouTubeサムネ",
+          brief:{ "サイズ":"1280×720px（YouTube）","難易度":"易","概要":"時短レシピのサムネ。シズル感と手軽さ","ターゲット":"20〜40代、忙しい一人暮らし・共働き","サービス名":"ずぼら飯研究所","キャッチコピー":"10分で、優勝。","サブテキスト":"包丁いらずの爆速丼","CTAボタン":"（料理写真を大きく配置）","テーマカラー":"赤・黄・白","印象":"美味しそう・親しみ・手軽" },
+          must:["キャッチコピー","テーマカラー","サイズ"] },
+
+        { level:2, lvName:"サムネ", client:"マネー大学",
+          msg:"新NISA解説動画のサムネです。信頼感がありつつ、見たくなる感じで！",
+          title:"新NISA解説動画｜YouTubeサムネ",
+          brief:{ "サイズ":"1280×720px（YouTube）","難易度":"中","概要":"投資解説のサムネ。信頼感＋ちょい煽り","ターゲット":"20〜50代男女、投資初心者","サービス名":"マネー大学","キャッチコピー":"新NISA、結局これだけやればいい。","サブテキスト":"知らないと損する5つのこと","CTAボタン":"（人物＋図解を配置）","テーマカラー":"紺・黄・白","印象":"信頼・明快・ちょい煽り" },
+          must:["キャッチコピー","テーマカラー","サイズ"] },
+
+        { level:2, lvName:"サムネ", client:"ふらり旅Vlog",
+          msg:"京都ひとり旅Vlogのサムネです。エモくて、行きたくなる雰囲気で。",
+          title:"京都ひとり旅Vlog｜YouTubeサムネ",
+          brief:{ "サイズ":"1280×720px（YouTube）","難易度":"易","概要":"旅Vlogのサムネ。情緒・憧れで再生を誘う","ターゲット":"20〜40代男女、旅・癒し好き","サービス名":"ふらり旅Vlog","キャッチコピー":"ひとりの京都は、贅沢だった。","サブテキスト":"秋の朝、誰もいない寺院","CTAボタン":"（風景写真を大きく）","テーマカラー":"和の朱・墨・生成り","印象":"情緒・静けさ・憧れ" },
+          must:["キャッチコピー","テーマカラー","サイズ"] },
 
         // ===== LV3 LP =====
-        {
-          level: 3, lvName: "LP", client: "そよかぜ歯科クリニック",
-          msg: "新規開院します！歯医者が苦手な方にも安心が伝わるLPをお願いします🦷",
-          title: "新規開院｜集患ランディングページ",
-          brief: {
-            "難易度": "中", "概要": "新規開院の集患LP（縦長1ページ）。予約獲得が目的",
-            "ターゲット": "近隣のファミリー層、歯医者が苦手な人", "サービス名": "そよかぜ歯科クリニック",
-            "必須セクション": "FV（安心感）／院長あいさつ／診療内容／院内写真／アクセス／予約CTA（固定）",
-            "キャッチコピー": "「痛くない」を、あたりまえに。", "CTAボタン": "かんたんWEB予約",
-            "テーマカラー": "白・水色・やわらかい緑", "印象": "清潔・安心・やさしい", "追加評価観点": "予約までの導線・情報の流れ",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 3, lvName: "LP", client: "Tasco（SaaS）",
-          msg: "タスク管理ツールの無料トライアルLPです。「これ便利！」と思わせたい！",
-          title: "タスク管理SaaS｜無料トライアルLP",
-          brief: {
-            "難易度": "中", "概要": "無料トライアル獲得LP。課題→解決の流れで訴求",
-            "ターゲット": "中小企業のチームリーダー", "サービス名": "Tasco",
-            "必須セクション": "FV／課題提起／解決（機能）／料金／導入事例／CTA",
-            "キャッチコピー": "チームの「あれ、どうなった？」をゼロに。", "CTAボタン": "14日間 無料ではじめる",
-            "テーマカラー": "白・青", "印象": "スマート・信頼・効率的", "追加評価観点": "情報設計・CTAの導線",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 3, lvName: "LP", client: "ペラペラEnglish",
-          msg: "オンライン英会話の無料体験LPです。「話せるかも」と思わせたいです🗣️",
-          title: "オンライン英会話｜無料体験LP",
-          brief: {
-            "難易度": "中", "概要": "無料体験レッスンの申込LP。続けられる・話せる実感を訴求",
-            "ターゲット": "20〜40代、英語に挫折経験あり", "サービス名": "ペラペラEnglish",
-            "必須セクション": "FV／悩み共感／特徴／講師紹介／料金／受講者の声／CTA",
-            "キャッチコピー": "3ヶ月後、英語が口から出てくる。", "CTAボタン": "無料体験レッスンを予約",
-            "テーマカラー": "オレンジ・白・紺", "印象": "前向き・親しみ・信頼", "追加評価観点": "申込までの導線・安心材料",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 3, lvName: "LP", client: "SORA YOGA",
-          msg: "ヨガスタジオの体験予約LPです。心がほどける、静かな心地よさで🧘",
-          title: "ヨガスタジオ｜体験予約LP",
-          brief: {
-            "難易度": "中", "概要": "体験レッスン予約のLP。リラックス感と通いやすさを訴求",
-            "ターゲット": "20〜40代女性、運動不足・ストレス解消", "サービス名": "SORA YOGA",
-            "必須セクション": "FV（世界観）／効果／レッスン紹介／スタジオ写真／料金／アクセス／予約CTA",
-            "キャッチコピー": "深呼吸から、はじめよう。", "CTAボタン": "体験レッスンを予約",
-            "テーマカラー": "白・くすみグリーン・ベージュ", "印象": "穏やか・心地よい・上質", "追加評価観点": "世界観の統一・導線",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 3, lvName: "LP", client: "tsumugi（ハンドメイド作家）",
-          msg: "受注会の告知LPです。作品の世界観と、手づくりの温度感を大切に🧵",
-          title: "ハンドメイド作家｜受注会告知LP",
-          brief: {
-            "難易度": "中", "概要": "受注会の告知・予約LP。作家の世界観でファンを動かす",
-            "ターゲット": "20〜40代女性、ていねいな暮らし好き", "サービス名": "tsumugi",
-            "必須セクション": "FV／作品ギャラリー／作家の想い／受注会概要／予約CTA",
-            "キャッチコピー": "ひと針ずつ、あなたのために。", "CTAボタン": "受注会を予約する",
-            "テーマカラー": "生成り・くすみブルー・茶", "印象": "あたたかい・素朴・上質", "追加評価観点": "世界観・写真の見せ方",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 3, lvName: "LP", client: "未来起業塾",
-          msg: "起業セミナーの集客LPです。一歩踏み出したくなる、熱量のあるLPを🔥",
-          title: "起業セミナー｜集客LP",
-          brief: {
-            "難易度": "難", "概要": "セミナー申込のLP。共感→実績→限定性で申込を後押し",
-            "ターゲット": "20〜40代、起業・副業に興味", "サービス名": "未来起業塾",
-            "必須セクション": "FV／悩み共感／セミナー内容／講師実績／参加者の声／日程／申込CTA",
-            "キャッチコピー": "「いつか」を、「今日」に変える。", "CTAボタン": "無料セミナーに申し込む",
-            "テーマカラー": "黒・ゴールド・白", "印象": "情熱・信頼・特別感", "追加評価観点": "ストーリー設計・申込導線",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
-        {
-          level: 3, lvName: "LP", client: "まいにちキッチン",
-          msg: "ミールキット定期便のLPです。「これなら続く」と思える手軽さを🍳",
-          title: "ミールキット定期便｜申込LP",
-          brief: {
-            "難易度": "中", "概要": "定期便の申込LP。時短・おいしさ・続けやすさを訴求",
-            "ターゲット": "共働き・子育て世帯", "サービス名": "まいにちキッチン",
-            "必須セクション": "FV／悩み共感／特徴／メニュー例／料金／お客様の声／CTA",
-            "キャッチコピー": "献立に、もう悩まない。", "CTAボタン": "初回半額で試す",
-            "テーマカラー": "オレンジ・白・緑", "印象": "あたたかい・手軽・おいしそう", "追加評価観点": "情報の流れ・CTA",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
+        { level:3, lvName:"LP", client:"そよかぜ歯科クリニック",
+          msg:"新規開院します！歯医者が苦手な方にも安心が伝わるLPをお願いします。",
+          title:"新規開院｜集患ランディングページ",
+          brief:{ "サイズ":"幅1280px（縦長・高さ自由）","難易度":"中","概要":"新規開院の集患LP。予約獲得が目的","ターゲット":"近隣のファミリー層、歯医者が苦手な人","サービス名":"そよかぜ歯科クリニック","必須セクション":"FV／院長あいさつ／診療内容／院内写真／アクセス／予約CTA（固定）","キャッチコピー":"「痛くない」を、あたりまえに。","CTAボタン":"かんたんWEB予約","テーマカラー":"白・水色・やわらかい緑","印象":"清潔・安心・やさしい","追加評価観点":"予約までの導線・情報の流れ" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:3, lvName:"LP", client:"らくらくスマホ教室",
+          msg:"シニア向けスマホ教室のLPです。「私にもできそう」と思える安心感を大切に。",
+          title:"シニア向けスマホ教室｜申込LP",
+          brief:{ "サイズ":"幅1280px（縦長・大きめ文字推奨）","難易度":"中","概要":"体験申込のLP。ITが苦手な層の不安を払拭","ターゲット":"60〜80代、スマホ初心者","サービス名":"らくらくスマホ教室","必須セクション":"FV／よくある悩み／教室の特徴／先生紹介／料金／アクセス／申込CTA","キャッチコピー":"スマホ、ゆっくり覚えませんか？","CTAボタン":"無料体験に申し込む","テーマカラー":"オレンジ・白・若草色","印象":"やさしい・安心・親しみ（大きく読みやすく）","追加評価観点":"文字の大きさ・分かりやすさ・導線" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:3, lvName:"LP", client:"Tasco（SaaS）",
+          msg:"タスク管理ツールの無料トライアルLPです。「これ便利！」と思わせたい！",
+          title:"タスク管理SaaS｜無料トライアルLP",
+          brief:{ "サイズ":"幅1280px（縦長）","難易度":"中","概要":"無料トライアル獲得LP。課題→解決の流れ","ターゲット":"中小企業のチームリーダー（男女）","サービス名":"Tasco","必須セクション":"FV／課題提起／解決（機能）／料金／導入事例／CTA","キャッチコピー":"チームの「あれ、どうなった？」をゼロに。","CTAボタン":"14日間 無料ではじめる","テーマカラー":"白・青","印象":"スマート・信頼・効率的","追加評価観点":"情報設計・CTAの導線" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:3, lvName:"LP", client:"SORA YOGA",
+          msg:"ヨガスタジオの体験予約LPです。心がほどける、静かな心地よさで。",
+          title:"ヨガスタジオ｜体験予約LP",
+          brief:{ "サイズ":"幅1280px（縦長）","難易度":"中","概要":"体験予約のLP。リラックス感と通いやすさ","ターゲット":"20〜50代男女、運動不足・ストレス解消","サービス名":"SORA YOGA","必須セクション":"FV（世界観）／効果／レッスン紹介／スタジオ写真／料金／アクセス／予約CTA","キャッチコピー":"深呼吸から、はじめよう。","CTAボタン":"体験レッスンを予約","テーマカラー":"白・くすみグリーン・ベージュ","印象":"穏やか・心地よい・上質","追加評価観点":"世界観の統一・導線" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:3, lvName:"LP", client:"未来起業塾",
+          msg:"起業セミナーの集客LPです。一歩踏み出したくなる、熱量のあるLPを。",
+          title:"起業セミナー｜集客LP",
+          brief:{ "サイズ":"幅1280px（縦長）","難易度":"難","概要":"セミナー申込LP。共感→実績→限定性で後押し","ターゲット":"20〜40代男女、起業・副業に興味","サービス名":"未来起業塾","必須セクション":"FV／悩み共感／内容／講師実績／参加者の声／日程／申込CTA","キャッチコピー":"「いつか」を、「今日」に変える。","CTAボタン":"無料セミナーに申し込む","テーマカラー":"黒・ゴールド・白","印象":"情熱・信頼・特別感","追加評価観点":"ストーリー設計・申込導線" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:3, lvName:"LP", client:"まいにちキッチン",
+          msg:"ミールキット定期便のLPです。「これなら続く」と思える手軽さを。",
+          title:"ミールキット定期便｜申込LP",
+          brief:{ "サイズ":"幅1280px（縦長）","難易度":"中","概要":"定期便の申込LP。時短・続けやすさを訴求","ターゲット":"共働き・子育て世帯（男女）","サービス名":"まいにちキッチン","必須セクション":"FV／悩み共感／特徴／メニュー例／料金／お客様の声／CTA","キャッチコピー":"献立に、もう悩まない。","CTAボタン":"初回半額で試す","テーマカラー":"オレンジ・白・緑","印象":"あたたかい・手軽・おいしそう","追加評価観点":"情報の流れ・CTA" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
 
         // ===== LV4 Webサイト =====
-        {
-          level: 4, lvName: "Webサイト", client: "離島観光協会あおしま",
-          msg: "離島の観光促進サイトです。「行ってみたい」を引き出す世界観で🏝️",
-          title: "離島観光サイト（複数ページ）",
-          brief: {
-            "難易度": "難", "概要": "観光促進サイト（トップ＋下層ページ）。来島の動機づけ",
-            "ターゲット": "自然・癒しを求める20〜30代", "サービス名": "離島観光協会あおしま",
-            "必須ページ": "トップ／見どころ／モデルコース／アクセス／よくある質問",
-            "キャッチコピー": "何もない、が、ぜんぶある。", "CTAボタン": "フェリーの時刻を見る",
-            "テーマカラー": "白・海の青・砂のベージュ", "印象": "開放感・静けさ・特別感", "追加評価観点": "ページ間の回遊・情報構造・トーン統一",
-          },
-          must: ["キャッチコピー", "テーマカラー"],
-        },
-        {
-          level: 4, lvName: "Webサイト", client: "PEACHY COFFEE 本部",
-          msg: "ブランドサイトを作りたいです！お店の世界観をまるごと伝えたい🍑",
-          title: "カフェ ブランドサイト（複数ページ）",
-          brief: {
-            "難易度": "難", "概要": "ブランディングサイト。世界観・メニュー・店舗情報を統一トーンで",
-            "ターゲット": "20〜30代女性、カフェ好き・ファン化狙い", "サービス名": "PEACHY COFFEE",
-            "必須ページ": "トップ／コンセプト／メニュー／店舗一覧／ニュース",
-            "キャッチコピー": "桃いろの、しあわせ時間。", "CTAボタン": "お近くの店舗を探す",
-            "テーマカラー": "ピンク・白・くすみベージュ", "印象": "やわらかい・特別感・心地よい", "追加評価観点": "世界観の一貫性・回遊・写真演出",
-          },
-          must: ["キャッチコピー", "テーマカラー"],
-        },
-        {
-          level: 4, lvName: "Webサイト", client: "たんぽぽ税理士事務所",
-          msg: "事務所のコーポレートサイトです。堅すぎず、相談しやすい雰囲気で。",
-          title: "税理士事務所 コーポレートサイト（複数ページ）",
-          brief: {
-            "難易度": "難", "概要": "信頼獲得＋問い合わせ促進。専門性と親しみを両立",
-            "ターゲット": "個人事業主・中小企業の経営者", "サービス名": "たんぽぽ税理士事務所",
-            "必須ページ": "トップ／サービス／料金／スタッフ紹介／お問い合わせ",
-            "キャッチコピー": "数字の悩み、気軽に話せる場所。", "CTAボタン": "無料相談を予約",
-            "テーマカラー": "白・緑・紺", "印象": "誠実・親しみ・信頼", "追加評価観点": "情報構造・信頼感・問い合わせ導線",
-          },
-          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
-        },
+        { level:4, lvName:"Webサイト", client:"離島観光協会あおしま",
+          msg:"離島の観光促進サイトです。「行ってみたい」を引き出す世界観で。",
+          title:"離島観光サイト（複数ページ）",
+          brief:{ "サイズ":"幅1440px（PCトップ）／レスポンシブ対応","難易度":"難","概要":"観光促進サイト。来島の動機づけ","ターゲット":"自然・癒しを求める20〜40代男女","サービス名":"離島観光協会あおしま","必須ページ":"トップ／見どころ／モデルコース／アクセス／よくある質問","キャッチコピー":"何もない、が、ぜんぶある。","CTAボタン":"フェリーの時刻を見る","テーマカラー":"白・海の青・砂のベージュ","印象":"開放感・静けさ・特別感","追加評価観点":"回遊・情報構造・トーン統一" },
+          must:["キャッチコピー","テーマカラー","サイズ"] },
+
+        { level:4, lvName:"Webサイト", client:"たんぽぽ税理士事務所",
+          msg:"事務所のコーポレートサイトです。堅すぎず、相談しやすい雰囲気で。",
+          title:"税理士事務所 コーポレートサイト（複数ページ）",
+          brief:{ "サイズ":"幅1440px（PCトップ）／レスポンシブ対応","難易度":"難","概要":"信頼獲得＋問い合わせ促進","ターゲット":"個人事業主・中小企業の経営者（男女・全年代）","サービス名":"たんぽぽ税理士事務所","必須ページ":"トップ／サービス／料金／スタッフ紹介／お問い合わせ","キャッチコピー":"数字の悩み、気軽に話せる場所。","CTAボタン":"無料相談を予約","テーマカラー":"白・緑・紺","印象":"誠実・親しみ・信頼","追加評価観点":"情報構造・信頼感・問い合わせ導線" },
+          must:["キャッチコピー","CTAボタン","テーマカラー","サイズ"] },
+
+        { level:4, lvName:"Webサイト", client:"PEACHY COFFEE 本部",
+          msg:"ブランドサイトを作りたいです！お店の世界観をまるごと伝えたいです。",
+          title:"カフェ ブランドサイト（複数ページ）",
+          brief:{ "サイズ":"幅1440px（PCトップ）／レスポンシブ対応","難易度":"難","概要":"ブランディングサイト。世界観の統一","ターゲット":"20〜40代、カフェ好き","サービス名":"PEACHY COFFEE","必須ページ":"トップ／コンセプト／メニュー／店舗一覧／ニュース","キャッチコピー":"桃いろの、しあわせ時間。","CTAボタン":"お近くの店舗を探す","テーマカラー":"ピンク・白・くすみベージュ","印象":"やわらかい・特別感・心地よい","追加評価観点":"世界観の一貫性・回遊・写真演出" },
+          must:["キャッチコピー","テーマカラー","サイズ"] },
       ];
 
       const CATS = [
-        { key: "haishoku", name: "配色" },
-        { key: "layout", name: "レイアウト・余白" },
-        { key: "typography", name: "文字組み・可読性" },
-        { key: "shisen", name: "視線誘導・伝わりやすさ" },
-        { key: "click", name: "クリック魅力" },
-        { key: "sekaikan", name: "世界観・お題一致" },
+        { key:"haishoku", name:"配色" },
+        { key:"layout", name:"レイアウト・余白" },
+        { key:"typography", name:"文字組み・可読性" },
+        { key:"shisen", name:"視線誘導・伝わりやすさ" },
+        { key:"click", name:"クリック魅力" },
+        { key:"sekaikan", name:"世界観・お題一致" },
       ];
 
-      /* デモ用コメント（本番はAIが生成） */
       const COMMENTS = {
-        haishoku: { hi: "テーマカラーが世界観にぴったりで好印象です。", lo: "色数を絞ると、ぐっと締まって見えます。" },
-        layout: { hi: "余白の取り方が上手で、視覚的に安定しています。", lo: "要素の重心が偏り気味。整列をそろえると安定します。" },
-        typography: { hi: "サイズの強弱が明快で、一瞬で読めます。", lo: "主役の文字が背景に埋もれ気味。白フチやコントラストを足すと◎。" },
-        shisen: { hi: "視線が主役→詳細→CTAへ自然に流れています。", lo: "一番見せたい要素を、もう少し大きく・上に置くと伝わります。" },
-        click: { hi: "コピーに惹きが強く、思わず押したくなります。", lo: "ベネフィットや限定感を一言足すと、行動につながります。" },
-        sekaikan: { hi: "ターゲットへのトーンが完璧。世界観の作り込みが見事です。", lo: "お題の印象に、もう一歩トーンを寄せられます。" },
+        haishoku:{ hi:"テーマカラーが世界観にぴったりで好印象です。", lo:"色数を絞ると、ぐっと締まって見えます。" },
+        layout:{ hi:"余白の取り方が上手で、視覚的に安定しています。", lo:"要素の重心が偏り気味。整列をそろえると安定します。" },
+        typography:{ hi:"サイズの強弱が明快で、一瞬で読めます。", lo:"主役の文字が背景に埋もれ気味。白フチやコントラストを足すと◎。" },
+        shisen:{ hi:"視線が主役→詳細→CTAへ自然に流れています。", lo:"一番見せたい要素を、もう少し大きく・上に置くと伝わります。" },
+        click:{ hi:"コピーに惹きが強く、思わず押したくなります。", lo:"ベネフィットや限定感を一言足すと、行動につながります。" },
+        sekaikan:{ hi:"ターゲットへのトーンが完璧。世界観の作り込みが見事です。", lo:"お題の印象に、もう一歩トーンを寄せられます。" },
       };
 
-      /* =========================================================
-         状態管理（localStorage）
-      ========================================================= */
       const store = {
-        get() { return JSON.parse(localStorage.getItem("bannergym") || '{"count":0,"streak":0,"lastDay":"","history":[]}'); },
-        set(s) { localStorage.setItem("bannergym", JSON.stringify(s)); },
+        get(){ return JSON.parse(localStorage.getItem("bannergym") || '{"count":0,"streak":0,"lastDay":"","history":[]}'); },
+        set(s){ localStorage.setItem("bannergym", JSON.stringify(s)); },
       };
-      let currentOdai = null, uploadedImg = null, trendChartObj = null, radarChartObj = null;
+      let currentOdai=null, uploadedImg=null, trendChartObj=null, radarChartObj=null;
 
-      function rankOf(avg) {
-        if (avg >= 85) return "プロ";
-        if (avg >= 70) return "一人前";
-        if (avg >= 50) return "見習い+";
-        return "見習い";
-      }
-      function refreshStats() {
-        const s = store.get();
-        const avg = s.history.length ? Math.round(s.history.reduce((a, b) => a + b.total, 0) / s.history.length) : 0;
-        document.getElementById("rankLabel").textContent = rankOf(avg);
+      function avgScore(){ const s=store.get(); return s.history.length ? Math.round(s.history.reduce((a,b)=>a+b.total,0)/s.history.length) : 0; }
+      function rankOf(avg){ if(avg>=85) return "プロ"; if(avg>=70) return "一人前"; if(avg>=50) return "見習い+"; return "見習い"; }
+      function refreshStats(){
+        const s=store.get();
+        document.getElementById("rankLabel").textContent = rankOf(avgScore());
         document.getElementById("streakLabel").textContent = s.streak;
         document.getElementById("countLabel").textContent = s.count;
-        if (s.history.length >= 1) {
-          document.getElementById("historyCard").style.display = "block";
-          drawTrend(s.history);
-        }
+        if(s.history.length>=1){ document.getElementById("historyCard").style.display="block"; drawTrend(s.history); }
       }
 
-      /* =========================================================
-         画面遷移
-      ========================================================= */
-      function go(id) {
-        document.querySelectorAll(".screen").forEach((e) => e.classList.remove("active"));
+      function go(id){
+        document.querySelectorAll(".screen").forEach((e)=>e.classList.remove("active"));
         document.getElementById(id).classList.add("active");
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top:0, behavior:"smooth" });
       }
 
-      function pickOdai(preferLevel) {
-        let pool = ODAI;
-        if (preferLevel) pool = ODAI.filter((o) => o.level === preferLevel);
-        if (!pool.length) pool = ODAI;
-        // 直前と同じお題は避ける（連続で同じものが出にくいように）
-        let choices = pool.filter((o) => o !== currentOdai);
-        if (!choices.length) choices = pool;
-        return choices[Math.floor(Math.random() * choices.length)];
+      function pickOdai(preferLevel){
+        let pool = preferLevel ? ODAI.filter((o)=>o.level===preferLevel) : ODAI;
+        if(!pool.length) pool = ODAI;
+        let choices = pool.filter((o)=>o!==currentOdai);
+        if(!choices.length) choices = pool;
+        return choices[Math.floor(Math.random()*choices.length)];
       }
 
-      function openOdai(odai) {
+      function openOdai(odai){
         currentOdai = odai || pickOdai();
         document.getElementById("clientName").textContent = currentOdai.client;
         document.getElementById("clientMsg").textContent = currentOdai.msg;
         document.getElementById("odaiTitle").textContent = currentOdai.title;
+        document.getElementById("sizePill").textContent = currentOdai.brief["サイズ"] || "サイズ自由";
         const badge = document.getElementById("lvBadge");
-        badge.className = "level-badge lv" + currentOdai.level;
-        badge.textContent = "LV" + currentOdai.level + " " + currentOdai.lvName;
-        const t = document.getElementById("briefTable");
-        t.innerHTML = "";
-        for (const [k, v] of Object.entries(currentOdai.brief)) {
+        badge.className = "level-badge lv"+currentOdai.level;
+        badge.textContent = "LV"+currentOdai.level+" "+currentOdai.lvName;
+        const t = document.getElementById("briefTable"); t.innerHTML="";
+        for(const [k,v] of Object.entries(currentOdai.brief)){
+          if(k==="サイズ") continue; // サイズは上のピルで表示済み
           const isMust = currentOdai.must.includes(k);
-          t.innerHTML += `<tr><th>${k}${isMust ? " ★" : ""}</th><td class="${isMust ? "must" : ""}">${v}</td></tr>`;
+          t.innerHTML += `<tr><th>${k}${isMust?" ★":""}</th><td class="${isMust?"must":""}">${v}</td></tr>`;
         }
-        // reset upload
-        uploadedImg = null;
-        document.getElementById("uploadText").textContent = "＋ クリックして画像をアップロード";
-        const sb = document.getElementById("submitBtn");
-        sb.disabled = true; sb.style.opacity = ".5";
+        uploadedImg=null;
+        document.getElementById("uploadText").textContent = "📤 クリックして画像をアップロード";
+        document.getElementById("submitBtn").disabled = true;
         go("odai");
       }
 
-      document.getElementById("fileInput").addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          uploadedImg = ev.target.result;
-          document.getElementById("uploadText").innerHTML =
-            `<div>✅ アップロード完了</div><img src="${uploadedImg}" alt="提出作品" />`;
-          const sb = document.getElementById("submitBtn");
-          sb.disabled = false; sb.style.opacity = "1";
+      document.getElementById("fileInput").addEventListener("change",(e)=>{
+        const file=e.target.files[0]; if(!file) return;
+        const reader=new FileReader();
+        reader.onload=(ev)=>{
+          uploadedImg=ev.target.result;
+          document.getElementById("uploadText").innerHTML = `<div style="color:var(--lv1);font-weight:700">✅ アップロード完了</div><img src="${uploadedImg}" alt="提出作品" />`;
+          document.getElementById("submitBtn").disabled = false;
         };
         reader.readAsDataURL(file);
       });
 
       /* =========================================================
          採点（デモ）
-         ▼▼▼ 本番ではこの関数の中身を「中継サーバー経由でClaude APIを呼ぶ」処理に差し替える ▼▼▼
+         ▼▼▼ 本番ではこの関数を「中継サーバー経由でClaude APIを呼ぶ」処理に差し替える ▼▼▼
       ========================================================= */
-      function demoScore() {
-        // 仮の点数：60〜95の範囲でそれっぽくバラつかせる
-        const scores = {};
-        CATS.forEach((c) => {
-          scores[c.key] = Math.floor(60 + Math.random() * 36);
-        });
-        const total = Math.round(CATS.reduce((a, c) => a + scores[c.key], 0) / CATS.length);
-        // 一番低い項目
-        let weakest = CATS[0].key, min = 999;
-        CATS.forEach((c) => { if (scores[c.key] < min) { min = scores[c.key]; weakest = c.key; } });
+      function demoScore(){
+        const scores={};
+        CATS.forEach((c)=>{ scores[c.key]=Math.floor(60+Math.random()*36); });
+        const total=Math.round(CATS.reduce((a,c)=>a+scores[c.key],0)/CATS.length);
+        let weakest=CATS[0].key, min=999;
+        CATS.forEach((c)=>{ if(scores[c.key]<min){ min=scores[c.key]; weakest=c.key; } });
         return {
-          total_score: total,
-          scores,
-          condition_check: { catchcopy_used: true, theme_color_used: true, cta_present: Math.random() > 0.3 },
+          total_score: total, scores,
+          condition_check:{ catchcopy_used:true, theme_color_used:true, cta_present:Math.random()>0.3, size_ok:Math.random()>0.2 },
           weakest_category: weakest,
-          client_voice: total >= 80
-            ? "わぁ、想像以上です！このまま本番でも使いたいくらい☺️"
-            : total >= 65
-            ? "いいですね！方向性バッチリです。あと少し詰めれば完璧かも。"
+          client_voice: total>=80 ? "わぁ、想像以上です！このまま本番でも使いたいくらいです。"
+            : total>=65 ? "いいですね！方向性バッチリです。あと少し詰めれば完璧かも。"
             : "ありがとうございます！良いところもあるので、一緒にブラッシュアップしましょう。",
         };
       }
 
-      function submitWork() {
+      function submitWork(){
         go("scoring");
-        const msgs = ["クライアントが作品を確認しています…", "デザインを細かくチェック中…", "フィードバックをまとめています…"];
-        let i = 0;
-        const sm = document.getElementById("scoringMsg");
-        const timer = setInterval(() => { i = (i + 1) % msgs.length; sm.textContent = msgs[i]; }, 900);
-        setTimeout(() => {
-          clearInterval(timer);
-          const result = demoScore();
-          saveResult(result);
-          showResult(result);
-        }, 2600);
+        const msgs=["クライアントが作品を確認しています…","デザインを細かくチェック中…","フィードバックをまとめています…"];
+        let i=0; const sm=document.getElementById("scoringMsg");
+        const timer=setInterval(()=>{ i=(i+1)%msgs.length; sm.textContent=msgs[i]; },900);
+        setTimeout(()=>{ clearInterval(timer); const r=demoScore(); saveResult(r); showResult(r); }, 2600);
       }
 
-      function saveResult(r) {
-        const s = store.get();
-        const today = new Date().toDateString();
-        if (s.lastDay !== today) { s.streak = (s.lastDay ? s.streak : 0) + 1; s.lastDay = today; }
-        if (!s.lastDay) { s.streak = 1; s.lastDay = today; }
-        s.count += 1;
-        s.history.push({ total: r.total_score, date: Date.now() });
-        if (s.history.length > 20) s.history = s.history.slice(-20);
+      function saveResult(r){
+        const s=store.get();
+        const beforeRank=rankOf(avgScore());
+        const today=new Date().toDateString();
+        if(s.lastDay!==today){ s.streak=(s.lastDay?s.streak:0)+1; s.lastDay=today; }
+        if(!s.lastDay){ s.streak=1; s.lastDay=today; }
+        s.count+=1;
+        s.history.push({ total:r.total_score, date:Date.now() });
+        if(s.history.length>20) s.history=s.history.slice(-20);
         store.set(s);
         refreshStats();
+        const afterRank=rankOf(avgScore());
+        r._rankUp = beforeRank!==afterRank ? afterRank : null;
       }
 
-      function scoreRankLabel(t) {
-        if (t >= 90) return "プロ級！文句なしの完成度です";
-        if (t >= 75) return "良い！実戦で通用するレベル";
-        if (t >= 60) return "あと一歩。光るものがあります";
-        if (t >= 40) return "基礎から見直すと伸びます";
+      function scoreRankLabel(t){
+        if(t>=90) return "プロ級！文句なしの完成度です";
+        if(t>=75) return "良い！実戦で通用するレベル";
+        if(t>=60) return "あと一歩。光るものがあります";
+        if(t>=40) return "基礎から見直すと伸びます";
         return "ナイス挑戦！ここからが伸びどき";
       }
 
-      function showResult(r) {
-        document.getElementById("totalScore").textContent = r.total_score;
-        document.getElementById("scoreRank").textContent = scoreRankLabel(r.total_score);
+      function showResult(r){
         document.getElementById("reviewClient").textContent = currentOdai.client;
         document.getElementById("clientVoice").textContent = r.client_voice;
+        document.getElementById("scoreRank").textContent = scoreRankLabel(r.total_score);
 
         // checks
-        const cc = r.condition_check;
-        const checks = document.getElementById("checks");
-        checks.innerHTML = "";
-        const checkData = [
-          ["キャッチコピー", cc.catchcopy_used],
-          ["テーマカラー", cc.theme_color_used],
-          ["CTA", cc.cta_present],
-        ];
-        checkData.forEach(([label, ok]) => {
-          checks.innerHTML += `<span class="check ${ok ? "" : "ng"}">${ok ? "✓" : "✗"} ${label}</span>`;
-        });
+        const cc=r.condition_check; const checks=document.getElementById("checks"); checks.innerHTML="";
+        [["キャッチコピー",cc.catchcopy_used],["テーマカラー",cc.theme_color_used],["CTA",cc.cta_present],["サイズ",cc.size_ok]]
+          .forEach(([label,ok])=>{ checks.innerHTML += `<span class="check ${ok?"":"ng"}">${ok?"✓":"✗"} ${label}</span>`; });
 
         // items
-        const items = document.getElementById("items");
-        items.innerHTML = "";
-        CATS.forEach((c) => {
-          const sc = r.scores[c.key];
-          const cm = sc >= 75 ? COMMENTS[c.key].hi : COMMENTS[c.key].lo;
-          items.innerHTML += `
-            <div class="item">
-              <div class="row"><span class="name">${c.name}</span><span class="sc">${sc}点</span></div>
-              <div class="bar"><div style="width:0%" data-w="${sc}%"></div></div>
-              <div class="cm">${cm}</div>
-            </div>`;
+        const items=document.getElementById("items"); items.innerHTML="";
+        CATS.forEach((c)=>{
+          const sc=r.scores[c.key];
+          const cm = sc>=75 ? COMMENTS[c.key].hi : COMMENTS[c.key].lo;
+          items.innerHTML += `<div class="item"><div class="row"><span class="name">${c.name}</span><span class="sc">${sc}点</span></div><div class="bar"><div data-w="${sc}%"></div></div><div class="cm">${cm}</div></div>`;
         });
 
-        // priority + reco
-        const weakName = CATS.find((c) => c.key === r.weakest_category).name;
-        document.getElementById("priority").innerHTML =
-          `🎯 <b>最優先で直すなら：</b>「${weakName}」。ここを伸ばすと全体の印象が一段上がります。`;
-        document.getElementById("reco").innerHTML =
-          `✨ <b>次のおすすめ：</b>あなたは今「${weakName}」が伸びしろ。それを鍛えるお題に挑戦してみましょう！`;
+        const weakName=CATS.find((c)=>c.key===r.weakest_category).name;
+        document.getElementById("priority").innerHTML = `🎯 <b>最優先で直すなら：</b>「${weakName}」。ここを伸ばすと全体の印象が一段上がります。`;
+        document.getElementById("reco").innerHTML = `✨ <b>次のおすすめ：</b>あなたは今「${weakName}」が伸びしろ。それを鍛えるお題に挑戦してみましょう！`;
 
-        // radar
         drawRadar(r.scores);
         go("result");
-        // animate bars
-        setTimeout(() => {
-          document.querySelectorAll(".bar > div").forEach((b) => (b.style.width = b.dataset.w));
-        }, 100);
+
+        // アニメーション
+        const ring=document.getElementById("ringFill");
+        const num=document.getElementById("totalScore");
+        ring.style.strokeDashoffset=402;
+        setTimeout(()=>{
+          ring.style.strokeDashoffset = 402 - (402*r.total_score/100);
+          document.querySelectorAll(".bar > div").forEach((b)=>(b.style.width=b.dataset.w));
+          // カウントアップ
+          let n=0; const step=Math.max(1,Math.ceil(r.total_score/40));
+          const ci=setInterval(()=>{ n+=step; if(n>=r.total_score){ n=r.total_score; clearInterval(ci);} num.textContent=n; },24);
+        },120);
+
+        if(r.total_score>=85) confetti();
+        if(r._rankUp){ setTimeout(()=>{ confetti(); toast("🎉 ランクアップ！「"+r._rankUp+"」になりました！"); }, 1200); }
       }
 
-      function drawRadar(scores) {
-        const ctx = document.getElementById("radarChart");
-        if (radarChartObj) radarChartObj.destroy();
-        radarChartObj = new Chart(ctx, {
-          type: "radar",
-          data: {
-            labels: CATS.map((c) => c.name),
-            datasets: [{
-              label: "今回のスコア",
-              data: CATS.map((c) => scores[c.key]),
-              fill: true,
-              backgroundColor: "rgba(255,122,152,.25)",
-              borderColor: "#ff7a98",
-              pointBackgroundColor: "#eb153f",
-            }],
-          },
-          options: {
-            scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, color: "#bbb" }, pointLabels: { font: { size: 11 } } } },
-            plugins: { legend: { display: false } },
-          },
+      function drawRadar(scores){
+        const ctx=document.getElementById("radarChart");
+        if(radarChartObj) radarChartObj.destroy();
+        radarChartObj=new Chart(ctx,{
+          type:"radar",
+          data:{ labels:CATS.map((c)=>c.name), datasets:[{ label:"今回", data:CATS.map((c)=>scores[c.key]), fill:true, backgroundColor:"rgba(79,93,214,.18)", borderColor:"#4f5dd6", pointBackgroundColor:"#7b5ee0", pointRadius:4 }] },
+          options:{ scales:{ r:{ min:0, max:100, ticks:{ stepSize:20, color:"#aab", backdropColor:"transparent" }, grid:{ color:"#e6e8f2" }, angleLines:{ color:"#e6e8f2" }, pointLabels:{ font:{ size:11.5 }, color:"#444" } } }, plugins:{ legend:{ display:false } } },
         });
       }
 
-      function drawTrend(history) {
-        const ctx = document.getElementById("trendChart");
-        if (trendChartObj) trendChartObj.destroy();
-        trendChartObj = new Chart(ctx, {
-          type: "line",
-          data: {
-            labels: history.map((_, i) => i + 1 + "本目"),
-            datasets: [{
-              label: "総合スコア", data: history.map((h) => h.total),
-              borderColor: "#ff7a98", backgroundColor: "rgba(255,122,152,.15)",
-              fill: true, tension: .3, pointBackgroundColor: "#eb153f",
-            }],
-          },
-          options: { scales: { y: { min: 0, max: 100 } }, plugins: { legend: { display: false } } },
+      function drawTrend(history){
+        const ctx=document.getElementById("trendChart");
+        if(trendChartObj) trendChartObj.destroy();
+        trendChartObj=new Chart(ctx,{
+          type:"line",
+          data:{ labels:history.map((_,i)=>(i+1)+"本目"), datasets:[{ label:"総合スコア", data:history.map((h)=>h.total), borderColor:"#4f5dd6", backgroundColor:"rgba(79,93,214,.12)", fill:true, tension:.35, pointBackgroundColor:"#7b5ee0" }] },
+          options:{ scales:{ y:{ min:0, max:100 } }, plugins:{ legend:{ display:false } } },
         });
       }
 
-      function nextOdai() {
-        // 直前の弱点に合わせて……は本番で。デモはレベルを少し上げて出題
-        const next = pickOdai();
-        openOdai(next);
-        toast("新しいお題が届きました！📩");
+      function nextOdai(){ openOdai(pickOdai()); toast("📩 新しいお題が届きました！"); }
+
+      function toast(msg){
+        const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");
+        clearTimeout(t._tm); t._tm=setTimeout(()=>t.classList.remove("show"),2200);
       }
 
-      function toast(msg) {
-        const t = document.getElementById("toast");
-        t.textContent = msg; t.classList.add("show");
-        setTimeout(() => t.classList.remove("show"), 1800);
+      function confetti(){
+        const colors=["#4f5dd6","#7b5ee0","#ff6b4a","#1fae74","#f0a020","#ef5b5b"];
+        for(let i=0;i<70;i++){
+          const c=document.createElement("div"); c.className="confetti";
+          c.style.left=Math.random()*100+"vw";
+          c.style.background=colors[Math.floor(Math.random()*colors.length)];
+          c.style.animation=`drop ${1.6+Math.random()*1.2}s linear ${Math.random()*0.3}s forwards`;
+          c.style.transform=`rotate(${Math.random()*360}deg)`;
+          if(Math.random()>0.5) c.style.borderRadius="50%";
+          document.body.appendChild(c);
+          setTimeout(()=>c.remove(),3200);
+        }
       }
 
-      // init
       refreshStats();
     </script>
   </body>

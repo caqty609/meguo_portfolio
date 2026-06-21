@@ -1,0 +1,8 @@
+{
+  "emmet.triggerExpansionOnTab": true,
+  "emmet.showExpandedAbbreviation": "always",
+  "emmet.includeLanguages": {
+    "html": "html"
+  },
+  "editor.tabCompletion": "off"
+}

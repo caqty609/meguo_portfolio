@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BannerGym（デモ）｜デザインの筋トレアプリ</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+      :root {
+        --peach: #ff7a98;
+        --peach-deep: #eb153f;
+        --cream: #fff5f1;
+        --ink: #5d4037;
+        --sub: #8d6e63;
+        --line: #f0d9d2;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", system-ui, sans-serif;
+        background: linear-gradient(160deg, #fff5f1 0%, #ffe9ef 100%);
+        color: var(--ink);
+        min-height: 100vh;
+      }
+      .app { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+      header.top { text-align: center; padding: 14px 0 6px; }
+      header.top h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+      header.top h1 span { color: var(--peach-deep); }
+      header.top p { margin: 4px 0 0; font-size: 12px; color: var(--sub); }
+      .stats {
+        display: flex; gap: 10px; margin: 14px 0; justify-content: center; flex-wrap: wrap;
+      }
+      .chip {
+        background: #fff; border: 1px solid var(--line); border-radius: 999px;
+        padding: 6px 14px; font-size: 13px; box-shadow: 0 2px 6px rgba(235,21,63,.05);
+      }
+      .chip b { color: var(--peach-deep); }
+      .card {
+        background: #fff; border-radius: 20px; padding: 22px;
+        box-shadow: 0 8px 24px rgba(235,21,63,.08); border: 1px solid var(--line);
+        margin-bottom: 16px;
+      }
+      .screen { display: none; animation: fade .4s ease; }
+      .screen.active { display: block; }
+      @keyframes fade { from { opacity: 0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+      .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        background: var(--peach); color: #fff; border: none; border-radius: 999px;
+        padding: 14px 22px; font-size: 15px; font-weight: 700; cursor: pointer;
+        box-shadow: 0 6px 16px rgba(255,122,152,.4); transition: transform .1s, filter .2s;
+        width: 100%;
+      }
+      .btn:hover { filter: brightness(1.05); }
+      .btn:active { transform: scale(.98); }
+      .btn.ghost { background: #fff; color: var(--peach-deep); border: 2px solid var(--peach); box-shadow: none; }
+      .msg {
+        background: var(--cream); border-radius: 16px 16px 16px 4px; padding: 14px 16px;
+        font-size: 14px; line-height: 1.7; border: 1px solid var(--line);
+      }
+      .msg .who { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+      .level-badge {
+        display: inline-block; font-size: 11px; font-weight: 700; color: #fff;
+        background: var(--peach-deep); border-radius: 6px; padding: 2px 8px; margin-right: 6px;
+      }
+      .level-badge.lv1 { background: #4caf50; }
+      .level-badge.lv2 { background: #ff9800; }
+      .level-badge.lv3 { background: #ff5722; }
+      .level-badge.lv4 { background: #9c27b0; }
+      h2.odai-title { font-size: 19px; margin: 14px 0 6px; }
+      table.brief { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 10px; }
+      table.brief th, table.brief td { text-align: left; vertical-align: top; padding: 7px 6px; border-bottom: 1px solid var(--line); }
+      table.brief th { color: var(--sub); white-space: nowrap; width: 36%; font-weight: 600; }
+      .must { color: var(--peach-deep); font-weight: 700; }
+      .upload-area {
+        border: 2px dashed var(--peach); border-radius: 16px; padding: 26px; text-align: center;
+        background: var(--cream); cursor: pointer; color: var(--sub); font-size: 14px; margin: 14px 0;
+      }
+      .upload-area img { max-width: 100%; max-height: 260px; border-radius: 10px; margin-top: 8px; }
+      .loading { text-align: center; padding: 40px 0; }
+      .spinner {
+        width: 54px; height: 54px; border: 5px solid var(--line); border-top-color: var(--peach);
+        border-radius: 50%; margin: 0 auto 18px; animation: spin 1s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .score-big { text-align: center; }
+      .score-big .num { font-size: 56px; font-weight: 800; color: var(--peach-deep); line-height: 1; }
+      .score-big .num small { font-size: 20px; color: var(--sub); }
+      .review { background: var(--cream); border-radius: 16px 16px 4px 16px; padding: 14px 16px; font-size: 14px; line-height: 1.7; margin: 12px 0; }
+      .review .who { font-size: 12px; color: var(--sub); margin-bottom: 4px; }
+      .item { padding: 10px 0; border-bottom: 1px solid var(--line); }
+      .item .row { display: flex; justify-content: space-between; align-items: center; }
+      .item .name { font-weight: 700; font-size: 14px; }
+      .item .sc { font-weight: 800; color: var(--peach-deep); }
+      .item .cm { font-size: 13px; color: var(--sub); margin-top: 4px; line-height: 1.6; }
+      .bar { height: 6px; background: var(--line); border-radius: 999px; margin-top: 6px; overflow: hidden; }
+      .bar > div { height: 100%; background: var(--peach); border-radius: 999px; transition: width .8s ease; }
+      .checks { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+      .check { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: #f1f8e9; color: #558b2f; }
+      .check.ng { background: #ffebee; color: #c62828; }
+      .priority { background: #fff8e1; border-left: 4px solid #ffb300; padding: 12px 14px; border-radius: 8px; font-size: 13.5px; line-height: 1.6; margin: 10px 0; }
+      .reco { background: #ede7f6; border-radius: 12px; padding: 14px; font-size: 13.5px; line-height: 1.6; margin-top: 8px; }
+      .demo-note { font-size: 11px; color: var(--sub); text-align: center; margin-top: 8px; }
+      .footer-note { text-align: center; font-size: 11px; color: var(--sub); margin-top: 20px; }
+      .toast {
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+        background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 999px;
+        font-size: 13px; opacity: 0; transition: opacity .3s; pointer-events: none;
+      }
+      .toast.show { opacity: .95; }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="top">
+        <h1>Banner<span>Gym</span> 🍑</h1>
+        <p>お題で鍛える、デザインの筋トレアプリ（デモ版）</p>
+      </header>
+
+      <div class="stats">
+        <div class="chip">ランク：<b id="rankLabel">見習い</b></div>
+        <div class="chip">連続：<b id="streakLabel">0</b>日 🔥</div>
+        <div class="chip">挑戦：<b id="countLabel">0</b>本</div>
+      </div>
+
+      <!-- ホーム -->
+      <section id="home" class="screen active">
+        <div class="card">
+          <div class="msg">
+            <div class="who">📩 クライアントからの新着メッセージ</div>
+            <div id="homeTeaser">こんにちは！新しいお仕事のご相談です。準備ができたら開いてください☺️</div>
+          </div>
+          <div style="height:16px"></div>
+          <button class="btn" onclick="openOdai()">📂 今日のお題を受け取る</button>
+        </div>
+        <div class="card" id="historyCard" style="display:none">
+          <b style="font-size:14px">📈 これまでの成長</b>
+          <canvas id="trendChart" height="160" style="margin-top:10px"></canvas>
+        </div>
+      </section>
+
+      <!-- お題 -->
+      <section id="odai" class="screen">
+        <div class="card">
+          <div class="msg">
+            <div class="who">📩 <span id="clientName"></span> より</div>
+            <div id="clientMsg"></div>
+          </div>
+          <h2 class="odai-title">
+            <span id="lvBadge" class="level-badge">LV1</span><span id="odaiTitle"></span>
+          </h2>
+          <table class="brief" id="briefTable"></table>
+        </div>
+        <div class="card">
+          <b style="font-size:14px">✏️ 作品を提出する</b>
+          <p style="font-size:13px;color:var(--sub)">Canva / Figma などで作った画像をアップしてください。</p>
+          <label class="upload-area" id="uploadArea">
+            <input type="file" id="fileInput" accept="image/*" hidden />
+            <div id="uploadText">＋ クリックして画像をアップロード</div>
+          </label>
+          <button class="btn" id="submitBtn" onclick="submitWork()" disabled style="opacity:.5">提出して採点してもらう</button>
+          <button class="btn ghost" onclick="go('home')" style="margin-top:10px">← もどる</button>
+        </div>
+      </section>
+
+      <!-- 採点中 -->
+      <section id="scoring" class="screen">
+        <div class="card loading">
+          <div class="spinner"></div>
+          <div id="scoringMsg" style="font-size:15px">クライアントが作品を確認しています…</div>
+        </div>
+      </section>
+
+      <!-- 結果 -->
+      <section id="result" class="screen">
+        <div class="card">
+          <div class="score-big">
+            <div class="num"><span id="totalScore">0</span><small>点</small></div>
+            <div style="font-size:13px;color:var(--sub);margin-top:4px" id="scoreRank"></div>
+          </div>
+          <div class="review">
+            <div class="who">💬 <span id="reviewClient"></span> の感想</div>
+            <div id="clientVoice"></div>
+          </div>
+          <canvas id="radarChart" height="240"></canvas>
+          <div class="checks" id="checks"></div>
+          <div id="items"></div>
+          <div class="priority" id="priority"></div>
+          <div class="reco" id="reco"></div>
+        </div>
+        <button class="btn" onclick="nextOdai()">🎯 おすすめの次のお題に挑戦</button>
+        <button class="btn ghost" onclick="go('home')" style="margin-top:10px">🏠 ホームにもどる</button>
+        <p class="demo-note">※ これはデモ版です。点数とコメントは仮のものです（本番ではAIが画像を見て採点します）。</p>
+      </section>
+
+      <p class="footer-note">BannerGym prototype — made for design practice 🍑</p>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script>
+      /* =========================================================
+         お題データ（依頼書）
+         本番ではAIが自動生成。デモは固定リストから出題。
+      ========================================================= */
+      const ODAI = [
+        {
+          level: 1, lvName: "バナー",
+          client: "PEACHY COFFEE 広報部",
+          msg: "夏の新作、いよいよ出します！果肉のごろっと感が伝わるバナーをお願いできますか？☺️",
+          title: 'ごろっと果肉の "白桃ラテ" 新登場バナー',
+          brief: {
+            "難易度": "易", "概要": "季節限定ドリンクの告知。果肉感と世界観を伝えるビジュアル重視",
+            "ターゲット": "20〜30代女性。インスタ映え・新作に敏感なカフェ好き",
+            "サービス名": "PEACHY COFFEE",
+            "キャッチコピー": "まるごと白桃ラテ、新登場！",
+            "サブテキスト": "果肉たっぷり。とろける甘さにうっとり。",
+            "CTAボタン": "今だけの限定メニューをチェック！",
+            "テーマカラー": "ピンク・白", "印象": "ジューシー・みずみずしい・かわいい",
+          },
+          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
+        },
+        {
+          level: 1, lvName: "バナー",
+          client: "BEAT GYM 運営",
+          msg: "夏前の入会キャンペーン、勝負のバナーです！背中を押す一枚を頼みます💪",
+          title: "夏まであと90日｜入会キャンペーンバナー",
+          brief: {
+            "難易度": "易", "概要": "夏前の入会キャンペーン告知。行動を後押しする力強い構成",
+            "ターゲット": "20〜40代、運動初心者", "サービス名": "BEAT GYM",
+            "キャッチコピー": "夏まで、あと90日。", "サブテキスト": "今日の一歩が、未来の自分をつくる。",
+            "CTAボタン": "無料体験を予約する", "テーマカラー": "ブラック・ネオンイエロー",
+            "印象": "力強い・スピード感・本気",
+          },
+          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
+        },
+        {
+          level: 2, lvName: "サムネ",
+          client: "ヨゾラGAMES",
+          msg: "新作ホラゲの実況サムネです。思わずクリックしたくなる怖さ、出せますか…？👻",
+          title: "深夜実況ホラーゲーム｜YouTubeサムネ",
+          brief: {
+            "難易度": "中", "概要": "ホラーゲーム実況のサムネ。一瞬で目を引く・クリックさせる",
+            "ターゲット": "10〜20代ゲーム好き", "サービス名": "ヨゾラGAMES",
+            "キャッチコピー": "深夜にやるんじゃなかった。", "サブテキスト": "新作ホラー、初見プレイ",
+            "CTAボタン": "（サムネ内に「衝撃のラスト」など煽り文）", "テーマカラー": "黒・血のような赤",
+            "印象": "恐怖・緊張・好奇心",
+          },
+          must: ["キャッチコピー", "テーマカラー"],
+        },
+        {
+          level: 3, lvName: "LP",
+          client: "そよかぜ歯科クリニック",
+          msg: "新規開院します！歯医者が苦手な方にも安心が伝わるLPをお願いします🦷",
+          title: "新規開院｜集患ランディングページ",
+          brief: {
+            "難易度": "中", "概要": "新規開院の集患LP（縦長1ページ）。予約獲得が目的",
+            "ターゲット": "近隣のファミリー層、歯医者が苦手な人", "サービス名": "そよかぜ歯科クリニック",
+            "必須セクション": "FV（安心感）／院長あいさつ／診療内容／院内写真／アクセス／予約CTA（固定）",
+            "キャッチコピー": "「痛くない」を、あたりまえに。", "CTAボタン": "かんたんWEB予約",
+            "テーマカラー": "白・水色・やわらかい緑", "印象": "清潔・安心・やさしい",
+            "追加評価観点": "予約までの導線・情報の流れ",
+          },
+          must: ["キャッチコピー", "CTAボタン", "テーマカラー"],
+        },
+      ];
+
+      const CATS = [
+        { key: "haishoku", name: "配色" },
+        { key: "layout", name: "レイアウト・余白" },
+        { key: "typography", name: "文字組み・可読性" },
+        { key: "shisen", name: "視線誘導・伝わりやすさ" },
+        { key: "click", name: "クリック魅力" },
+        { key: "sekaikan", name: "世界観・お題一致" },
+      ];
+
+      /* デモ用コメント（本番はAIが生成） */
+      const COMMENTS = {
+        haishoku: { hi: "テーマカラーが世界観にぴったりで好印象です。", lo: "色数を絞ると、ぐっと締まって見えます。" },
+        layout: { hi: "余白の取り方が上手で、視覚的に安定しています。", lo: "要素の重心が偏り気味。整列をそろえると安定します。" },
+        typography: { hi: "サイズの強弱が明快で、一瞬で読めます。", lo: "主役の文字が背景に埋もれ気味。白フチやコントラストを足すと◎。" },
+        shisen: { hi: "視線が主役→詳細→CTAへ自然に流れています。", lo: "一番見せたい要素を、もう少し大きく・上に置くと伝わります。" },
+        click: { hi: "コピーに惹きが強く、思わず押したくなります。", lo: "ベネフィットや限定感を一言足すと、行動につながります。" },
+        sekaikan: { hi: "ターゲットへのトーンが完璧。世界観の作り込みが見事です。", lo: "お題の印象に、もう一歩トーンを寄せられます。" },
+      };
+
+      /* =========================================================
+         状態管理（localStorage）
+      ========================================================= */
+      const store = {
+        get() { return JSON.parse(localStorage.getItem("bannergym") || '{"count":0,"streak":0,"lastDay":"","history":[]}'); },
+        set(s) { localStorage.setItem("bannergym", JSON.stringify(s)); },
+      };
+      let currentOdai = null, uploadedImg = null, trendChartObj = null, radarChartObj = null;
+
+      function rankOf(avg) {
+        if (avg >= 85) return "プロ";
+        if (avg >= 70) return "一人前";
+        if (avg >= 50) return "見習い+";
+        return "見習い";
+      }
+      function refreshStats() {
+        const s = store.get();
+        const avg = s.history.length ? Math.round(s.history.reduce((a, b) => a + b.total, 0) / s.history.length) : 0;
+        document.getElementById("rankLabel").textContent = rankOf(avg);
+        document.getElementById("streakLabel").textContent = s.streak;
+        document.getElementById("countLabel").textContent = s.count;
+        if (s.history.length >= 1) {
+          document.getElementById("historyCard").style.display = "block";
+          drawTrend(s.history);
+        }
+      }
+
+      /* =========================================================
+         画面遷移
+      ========================================================= */
+      function go(id) {
+        document.querySelectorAll(".screen").forEach((e) => e.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function pickOdai(preferLevel) {
+        let pool = ODAI;
+        if (preferLevel) pool = ODAI.filter((o) => o.level === preferLevel);
+        if (!pool.length) pool = ODAI;
+        return pool[Math.floor(Math.random() * pool.length)];
+      }
+
+      function openOdai(odai) {
+        currentOdai = odai || pickOdai();
+        document.getElementById("clientName").textContent = currentOdai.client;
+        document.getElementById("clientMsg").textContent = currentOdai.msg;
+        document.getElementById("odaiTitle").textContent = currentOdai.title;
+        const badge = document.getElementById("lvBadge");
+        badge.className = "level-badge lv" + currentOdai.level;
+        badge.textContent = "LV" + currentOdai.level + " " + currentOdai.lvName;
+        const t = document.getElementById("briefTable");
+        t.innerHTML = "";
+        for (const [k, v] of Object.entries(currentOdai.brief)) {
+          const isMust = currentOdai.must.includes(k);
+          t.innerHTML += `<tr><th>${k}${isMust ? " ★" : ""}</th><td class="${isMust ? "must" : ""}">${v}</td></tr>`;
+        }
+        // reset upload
+        uploadedImg = null;
+        document.getElementById("uploadText").textContent = "＋ クリックして画像をアップロード";
+        const sb = document.getElementById("submitBtn");
+        sb.disabled = true; sb.style.opacity = ".5";
+        go("odai");
+      }
+
+      document.getElementById("fileInput").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          uploadedImg = ev.target.result;
+          document.getElementById("uploadText").innerHTML =
+            `<div>✅ アップロード完了</div><img src="${uploadedImg}" alt="提出作品" />`;
+          const sb = document.getElementById("submitBtn");
+          sb.disabled = false; sb.style.opacity = "1";
+        };
+        reader.readAsDataURL(file);
+      });
+
+      /* =========================================================
+         採点（デモ）
+         ▼▼▼ 本番ではこの関数の中身を「中継サーバー経由でClaude APIを呼ぶ」処理に差し替える ▼▼▼
+      ========================================================= */
+      function demoScore() {
+        // 仮の点数：60〜95の範囲でそれっぽくバラつかせる
+        const scores = {};
+        CATS.forEach((c) => {
+          scores[c.key] = Math.floor(60 + Math.random() * 36);
+        });
+        const total = Math.round(CATS.reduce((a, c) => a + scores[c.key], 0) / CATS.length);
+        // 一番低い項目
+        let weakest = CATS[0].key, min = 999;
+        CATS.forEach((c) => { if (scores[c.key] < min) { min = scores[c.key]; weakest = c.key; } });
+        return {
+          total_score: total,
+          scores,
+          condition_check: { catchcopy_used: true, theme_color_used: true, cta_present: Math.random() > 0.3 },
+          weakest_category: weakest,
+          client_voice: total >= 80
+            ? "わぁ、想像以上です！このまま本番でも使いたいくらい☺️"
+            : total >= 65
+            ? "いいですね！方向性バッチリです。あと少し詰めれば完璧かも。"
+            : "ありがとうございます！良いところもあるので、一緒にブラッシュアップしましょう。",
+        };
+      }
+
+      function submitWork() {
+        go("scoring");
+        const msgs = ["クライアントが作品を確認しています…", "デザインを細かくチェック中…", "フィードバックをまとめています…"];
+        let i = 0;
+        const sm = document.getElementById("scoringMsg");
+        const timer = setInterval(() => { i = (i + 1) % msgs.length; sm.textContent = msgs[i]; }, 900);
+        setTimeout(() => {
+          clearInterval(timer);
+          const result = demoScore();
+          saveResult(result);
+          showResult(result);
+        }, 2600);
+      }
+
+      function saveResult(r) {
+        const s = store.get();
+        const today = new Date().toDateString();
+        if (s.lastDay !== today) { s.streak = (s.lastDay ? s.streak : 0) + 1; s.lastDay = today; }
+        if (!s.lastDay) { s.streak = 1; s.lastDay = today; }
+        s.count += 1;
+        s.history.push({ total: r.total_score, date: Date.now() });
+        if (s.history.length > 20) s.history = s.history.slice(-20);
+        store.set(s);
+        refreshStats();
+      }
+
+      function scoreRankLabel(t) {
+        if (t >= 90) return "プロ級！文句なしの完成度です";
+        if (t >= 75) return "良い！実戦で通用するレベル";
+        if (t >= 60) return "あと一歩。光るものがあります";
+        if (t >= 40) return "基礎から見直すと伸びます";
+        return "ナイス挑戦！ここからが伸びどき";
+      }
+
+      function showResult(r) {
+        document.getElementById("totalScore").textContent = r.total_score;
+        document.getElementById("scoreRank").textContent = scoreRankLabel(r.total_score);
+        document.getElementById("reviewClient").textContent = currentOdai.client;
+        document.getElementById("clientVoice").textContent = r.client_voice;
+
+        // checks
+        const cc = r.condition_check;
+        const checks = document.getElementById("checks");
+        checks.innerHTML = "";
+        const checkData = [
+          ["キャッチコピー", cc.catchcopy_used],
+          ["テーマカラー", cc.theme_color_used],
+          ["CTA", cc.cta_present],
+        ];
+        checkData.forEach(([label, ok]) => {
+          checks.innerHTML += `<span class="check ${ok ? "" : "ng"}">${ok ? "✓" : "✗"} ${label}</span>`;
+        });
+
+        // items
+        const items = document.getElementById("items");
+        items.innerHTML = "";
+        CATS.forEach((c) => {
+          const sc = r.scores[c.key];
+          const cm = sc >= 75 ? COMMENTS[c.key].hi : COMMENTS[c.key].lo;
+          items.innerHTML += `
+            <div class="item">
+              <div class="row"><span class="name">${c.name}</span><span class="sc">${sc}点</span></div>
+              <div class="bar"><div style="width:0%" data-w="${sc}%"></div></div>
+              <div class="cm">${cm}</div>
+            </div>`;
+        });
+
+        // priority + reco
+        const weakName = CATS.find((c) => c.key === r.weakest_category).name;
+        document.getElementById("priority").innerHTML =
+          `🎯 <b>最優先で直すなら：</b>「${weakName}」。ここを伸ばすと全体の印象が一段上がります。`;
+        document.getElementById("reco").innerHTML =
+          `✨ <b>次のおすすめ：</b>あなたは今「${weakName}」が伸びしろ。それを鍛えるお題に挑戦してみましょう！`;
+
+        // radar
+        drawRadar(r.scores);
+        go("result");
+        // animate bars
+        setTimeout(() => {
+          document.querySelectorAll(".bar > div").forEach((b) => (b.style.width = b.dataset.w));
+        }, 100);
+      }
+
+      function drawRadar(scores) {
+        const ctx = document.getElementById("radarChart");
+        if (radarChartObj) radarChartObj.destroy();
+        radarChartObj = new Chart(ctx, {
+          type: "radar",
+          data: {
+            labels: CATS.map((c) => c.name),
+            datasets: [{
+              label: "今回のスコア",
+              data: CATS.map((c) => scores[c.key]),
+              fill: true,
+              backgroundColor: "rgba(255,122,152,.25)",
+              borderColor: "#ff7a98",
+              pointBackgroundColor: "#eb153f",
+            }],
+          },
+          options: {
+            scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, color: "#bbb" }, pointLabels: { font: { size: 11 } } } },
+            plugins: { legend: { display: false } },
+          },
+        });
+      }
+
+      function drawTrend(history) {
+        const ctx = document.getElementById("trendChart");
+        if (trendChartObj) trendChartObj.destroy();
+        trendChartObj = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: history.map((_, i) => i + 1 + "本目"),
+            datasets: [{
+              label: "総合スコア", data: history.map((h) => h.total),
+              borderColor: "#ff7a98", backgroundColor: "rgba(255,122,152,.15)",
+              fill: true, tension: .3, pointBackgroundColor: "#eb153f",
+            }],
+          },
+          options: { scales: { y: { min: 0, max: 100 } }, plugins: { legend: { display: false } } },
+        });
+      }
+
+      function nextOdai() {
+        // 直前の弱点に合わせて……は本番で。デモはレベルを少し上げて出題
+        const next = pickOdai();
+        openOdai(next);
+        toast("新しいお題が届きました！📩");
+      }
+
+      function toast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg; t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 1800);
+      }
+
+      // init
+      refreshStats();
+    </script>
+  </body>
+</html>

@@ -5,32 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BannerGym｜デザインの筋トレアプリ</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --bg1: #f4f6fc;
-        --bg2: #e9edf8;
-        --ink: #232838;
-        --sub: #6b7280;
-        --primary: #4f5dd6;
-        --primary2: #7b5ee0;
-        --accent: #ff6b4a;
-        --accent-soft: #fff1ec;
-        --line: #e6e8f2;
-        --card: #ffffff;
-        --lv1: #1fae74;
+        --bg1: #fdf6e9;
+        --bg2: #fcefd8;
+        --ink: #4a3a2c;
+        --sub: #9b8676;
+        --primary: #f0883e;
+        --primary2: #f6a94b;
+        --accent: #ef6b52;
+        --accent-soft: #fff0e8;
+        --line: #f0e3cf;
+        --card: #fffdf7;
+        --lv1: #5bbf73;
         --lv2: #f0a020;
-        --lv3: #ef5b5b;
-        --lv4: #8b5cf6;
+        --lv3: #ef6b52;
+        --lv4: #c79a4b;
       }
       * { box-sizing: border-box; }
       html { -webkit-text-size-adjust: 100%; }
       body {
         margin: 0;
-        font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", system-ui, -apple-system, sans-serif;
+        font-family: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", system-ui, sans-serif;
+        font-weight: 500;
         color: var(--ink);
         font-size: 15.5px;
-        line-height: 1.6;
-        background: var(--bg1);
+        line-height: 1.7;
+        background: linear-gradient(180deg, #fdf6e9 0%, #fcefd8 100%);
         min-height: 100vh;
         position: relative;
         overflow-x: hidden;
@@ -39,22 +43,30 @@
       body::before, body::after {
         content: ""; position: fixed; border-radius: 50%; filter: blur(70px); opacity: .35; z-index: 0;
       }
-      body::before { width: 360px; height: 360px; background: #b9c2ff; top: -120px; right: -100px; }
-      body::after { width: 320px; height: 320px; background: #ffc7b8; bottom: -120px; left: -110px; }
+      body::before { width: 360px; height: 360px; background: #ffe08a; top: -120px; right: -100px; }
+      body::after { width: 320px; height: 320px; background: #ffcca3; bottom: -120px; left: -110px; }
       .app { max-width: 740px; margin: 0 auto; padding: 18px 16px 70px; position: relative; z-index: 1; }
 
       header.top {
-        text-align: center; padding: 18px 16px; margin-bottom: 16px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
-        border-radius: 22px; color: #fff; box-shadow: 0 12px 30px rgba(79,93,214,.3);
+        padding: 16px 20px; margin-bottom: 16px;
+        background: linear-gradient(135deg, #ffda6b 0%, #ffc24d 100%);
+        border-radius: 26px; color: var(--ink);
+        box-shadow: 0 10px 26px rgba(240,160,32,.3);
         position: relative; overflow: hidden;
+        display: flex; align-items: center; gap: 12px;
+        border: 2px solid #fff1bf;
       }
-      header.top::after {
-        content: ""; position: absolute; width: 180px; height: 180px; border-radius: 50%;
-        background: rgba(255,255,255,.12); top: -60px; right: -40px;
-      }
-      header.top h1 { margin: 0; font-size: 24px; letter-spacing: 1px; font-weight: 800; }
-      header.top p { margin: 5px 0 0; font-size: 12.5px; opacity: .92; }
+      .mascot-hero { font-size: 62px; line-height: 1; flex: 0 0 auto; filter: drop-shadow(0 3px 4px rgba(0,0,0,.15)); }
+      .hero-text { text-align: left; }
+      header.top h1 { margin: 0; font-family: "Yomogi", cursive; font-size: 34px; font-weight: 700; letter-spacing: 1px; display: inline-block; border-bottom: 5px solid var(--accent); padding-bottom: 1px; line-height: 1.1; }
+      header.top p { margin: 8px 0 0; font-size: 12.5px; font-weight: 700; }
+      .doodle { position: absolute; opacity: .85; pointer-events: none; }
+
+      /* コーチ（吹き出し） */
+      .coach-row { display: flex; align-items: flex-end; gap: 10px; margin: 16px 0 18px; }
+      .coach-mini { font-size: 42px; flex: 0 0 auto; line-height: 1; }
+      .coach-bubble { position: relative; background: #fff7e6; border: 2px solid #ffe2a6; border-radius: 14px; padding: 11px 15px; font-size: 13.5px; font-weight: 700; color: var(--ink); }
+      .coach-bubble::before { content: ""; position: absolute; left: -9px; bottom: 12px; border: 7px solid transparent; border-right-color: #ffe2a6; }
 
       .stats { display: flex; gap: 10px; margin: 0 0 18px; justify-content: center; flex-wrap: wrap; }
       .chip {
@@ -184,8 +196,14 @@
   <body>
     <div class="app">
       <header class="top">
-        <h1>BannerGym</h1>
-        <p>お題で鍛える、デザインの筋トレアプリ</p>
+        <!-- 🦁 ここを <img src="coach.png"> に差し替えると、あなたのコーチのイラストになります -->
+        <div class="mascot-hero">🦁💪</div>
+        <div class="hero-text">
+          <h1>BannerGym</h1>
+          <p>お題で鍛える、デザインの筋トレ「デザップ」</p>
+        </div>
+        <span class="doodle" style="top:10px;right:16px;font-size:18px">⭐</span>
+        <span class="doodle" style="bottom:10px;right:30px;font-size:14px">✨</span>
       </header>
 
       <div class="stats">
@@ -201,8 +219,11 @@
             <div class="who">📩 新着メッセージ</div>
             <div>こんにちは！新しいお仕事のご相談です。準備ができたら受け取ってください。</div>
           </div>
-          <div style="height:18px"></div>
-          <button class="btn" onclick="openOdai()">📂 今日のお題を受け取る</button>
+          <div class="coach-row">
+            <div class="coach-mini">🦁</div>
+            <div class="coach-bubble">いっしょにデザインを鍛えていこー！</div>
+          </div>
+          <button class="btn" onclick="openOdai()">🚩 今日のお題を受け取る</button>
         </div>
         <div class="card" id="trendCard" style="display:none">
           <div class="section-label">📈 これまでの成長</div>
@@ -246,8 +267,9 @@
       <!-- 採点中 -->
       <section id="scoring" class="screen">
         <div class="card loading">
+          <div style="font-size:48px;margin-bottom:8px">🦁🔍</div>
           <div class="spinner"></div>
-          <div id="scoringMsg" style="font-size:15.5px;font-weight:600">クライアントが作品を確認しています…</div>
+          <div id="scoringMsg" style="font-size:15.5px;font-weight:700">コーチが作品をジャッジ中…</div>
         </div>
       </section>
 
@@ -267,7 +289,7 @@
             <div class="demo-tag">デモ：点数はランダムの仮値です</div>
           </div>
           <div class="review">
-            <div class="who">💬 <span id="reviewClient"></span> の感想</div>
+            <div class="who">🦁 <span id="reviewClient">デザップコーチ</span>の喝！</div>
             <div id="clientVoice"></div>
           </div>
           <canvas id="radarChart" height="250"></canvas>
@@ -292,7 +314,7 @@
         <p class="demo-note">※ これはデモ版です。点数・コメント・改善ガイドは仮の内容です。<br>本番ではAIがあなたの画像を見て、実際に採点・添削します。</p>
       </section>
 
-      <p class="footer-note">BannerGym prototype — design practice for everyone</p>
+      <p class="footer-note">🏋️ BannerGym prototype — design practice for everyone</p>
     </div>
     <div class="toast" id="toast"></div>
 
@@ -596,15 +618,15 @@
           total_score: total, scores, weakest_category: weakest,
           condition_check:{ catchcopy_used:true, theme_color_used:true, cta_present:Math.random()>0.3, size_ok:Math.random()>0.2 },
           good_points, improvements,
-          client_voice: total>=80 ? "わぁ、想像以上です！このまま本番でも使いたいくらいです。"
-            : total>=65 ? "いいですね！方向性バッチリです。あと少し詰めれば完璧かも。"
-            : "ありがとうございます！良いところもあるので、一緒にブラッシュアップしましょう。",
+          client_voice: total>=80 ? "ガオーッ！やるじゃないか、見直したぞ。だが慢心するな、この調子でいけ！💪"
+            : total>=65 ? "ふむ…悪くない。だが甘いっ！ここを直せばもっと伸びる。逃げるなよ。"
+            : "喝ーーっ！🔥 まだまだ伸びしろだらけだ。だが大丈夫、コーチがついてる。もう一本いくぞ！",
         };
       }
 
       function submitWork(){
         go("scoring");
-        const msgs=["クライアントが作品を確認しています…","デザインを細かくチェック中…","フィードバックをまとめています…"];
+        const msgs=["コーチが作品をジャッジ中…","う〜む…どれどれ…","ビシッと添削していくぞ！"];
         let i=0; const sm=document.getElementById("scoringMsg");
         const timer=setInterval(()=>{ i=(i+1)%msgs.length; sm.textContent=msgs[i]; },900);
         setTimeout(()=>{
@@ -654,7 +676,6 @@
       }
 
       function renderResult(rec, fromHistory, fullImg){
-        document.getElementById("reviewClient").textContent = rec.client;
         document.getElementById("clientVoice").textContent = rec.client_voice;
         document.getElementById("scoreRank").textContent = scoreRankLabel(rec.total_score);
 
@@ -670,8 +691,8 @@
         });
 
         const weakName=CATS.find((c)=>c.key===rec.weakest_category).name;
-        document.getElementById("priority").innerHTML = `🎯 <b>最優先で直すなら：</b>「${weakName}」。ここを伸ばすと全体の印象が一段上がります。`;
-        document.getElementById("reco").innerHTML = `✨ <b>次のおすすめ：</b>あなたは今「${weakName}」が伸びしろ。それを鍛えるお題に挑戦してみましょう！`;
+        document.getElementById("priority").innerHTML = `🔥 <b>コーチの喝：</b>まずは「${weakName}」だ！ここを直せば一気に化けるぞ。`;
+        document.getElementById("reco").innerHTML = `🦁 <b>次はこれだ：</b>お前の伸びしろは「${weakName}」。それを鍛えるお題で出直してこい！`;
 
         // 改善ガイド（赤ペン添削）
         document.getElementById("submittedImg").src = fullImg || rec.thumb || "";

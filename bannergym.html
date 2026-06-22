@@ -279,7 +279,7 @@
 
         <div class="card">
           <div class="section-label">📝 改善ガイド（どこを・どう直す）</div>
-          <p style="font-size:13px;color:var(--sub);margin:2px 0 0">画像の番号と、下の解説が対応しています。</p>
+          <p style="font-size:12.5px;color:#d23b3b;background:#fdeaea;border-radius:8px;padding:8px 10px;margin:6px 0 0">⚠️ デモ版：このコメント・マーカー位置は<b>画像を見て作ったものではありません</b>（固定のサンプル文）。本番ではAIが実際に画像を見て、的確に添削します。</p>
           <div class="annot-wrap"><img id="submittedImg" class="annot-img" alt="提出作品" /><div id="annotLayer"></div></div>
           <div class="guide-good" id="goodPoints"></div>
           <div id="guideItems"></div>
@@ -481,6 +481,15 @@
         sekaikan:{ hi:"ターゲットへのトーンが完璧。世界観の作り込みが見事です。", lo:"お題の印象に、もう一歩トーンを寄せられます。" },
       };
 
+      const WHY = {
+        haishoku:"色の印象が世界観を左右するため",
+        layout:"余白と配置で第一印象が決まるため",
+        typography:"一瞬で読めるかが反応を左右するため",
+        shisen:"見てほしい順に視線を導くため",
+        click:"行動（クリック）につなげるため",
+        sekaikan:"ターゲットに刺さるトーンにするため",
+      };
+
       const store = {
         get(){
           const d=JSON.parse(localStorage.getItem("bannergym")||"null") || {};
@@ -579,7 +588,7 @@
         const weakest=sorted[0].key;
         const spots=[{x:24,y:26},{x:72,y:42},{x:42,y:78}]; // 添削マーカーの位置（デモ用）
         const improvements=sorted.slice(0,3).map((c,i)=>({
-          n:i+1, where:c.name, how:COMMENTS[c.key].lo, why:"お題の狙いにもっと近づけるため",
+          n:i+1, where:c.name, how:COMMENTS[c.key].lo, why:WHY[c.key],
           x:spots[i].x, y:spots[i].y,
         }));
         const good_points=sorted.slice(-2).map((c)=>COMMENTS[c.key].hi);

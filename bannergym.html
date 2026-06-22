@@ -191,6 +191,19 @@
       .hist-del { flex: 0 0 auto; background: #fdeaea; color: #d23b3b; border: none; border-radius: 9px; padding: 7px 10px; font-size: 15px; cursor: pointer; }
       .hist-del:hover { background: #fbd9d9; }
       .hist-empty { font-size: 13px; color: var(--sub); text-align: center; padding: 14px 0; }
+
+      /* 参考デザインのモーダル */
+      .modal-overlay { position: fixed; inset: 0; background: rgba(74,58,44,.45); display: none; align-items: flex-end; justify-content: center; z-index: 80; }
+      .modal-overlay.show { display: flex; }
+      .modal-card { background: var(--card); width: 100%; max-width: 740px; border-radius: 24px 24px 0 0; padding: 20px 18px 34px; max-height: 82vh; overflow: auto; animation: slideup .3s ease; }
+      @keyframes slideup { from { transform: translateY(100%);} to { transform: none;} }
+      .modal-head { display: flex; justify-content: space-between; align-items: center; font-size: 16px; }
+      .modal-x { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--sub); }
+      .modal-sub { font-size: 12.5px; color: var(--sub); margin: 6px 0 14px; }
+      .ref-link { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 15px; border: 1px solid var(--line); border-radius: 14px; margin-bottom: 10px; text-decoration: none; color: var(--ink); font-weight: 700; font-size: 14px; background: #fffdf7; }
+      .ref-link:hover { background: var(--accent-soft); }
+      .ref-link .rd { font-size: 11.5px; color: var(--sub); font-weight: 500; margin-top: 3px; }
+      .ref-cat { font-size: 12px; color: var(--sub); font-weight: 700; margin: 14px 0 8px; }
     </style>
   </head>
   <body>
@@ -260,6 +273,7 @@
             <div id="uploadText">📤 クリックして画像をアップロード</div>
           </label>
           <button class="btn accent" id="submitBtn" onclick="submitWork()" disabled>提出して採点してもらう</button>
+          <button class="btn ghost" onclick="openReference()" style="margin-top:10px">🔍 参考デザインを探す</button>
           <button class="btn ghost" onclick="go('home')" style="margin-top:10px">← もどる</button>
         </div>
       </section>
@@ -309,7 +323,7 @@
 
         <button class="btn" onclick="nextOdai()">🎯 おすすめの次のお題に挑戦</button>
         <button class="btn ghost" onclick="reChallenge()" style="margin-top:10px">🔁 同じお題でもう一度</button>
-        <button class="btn ghost" onclick="openReference()" style="margin-top:10px">🔍 参考デザインを探す（Pinterest）</button>
+        <button class="btn ghost" onclick="openReference()" style="margin-top:10px">🔍 参考デザインを探す</button>
         <button class="btn ghost" onclick="go('home')" style="margin-top:10px">🏠 ホームにもどる</button>
         <p class="demo-note">※ これはデモ版です。点数・コメント・改善ガイドは仮の内容です。<br>本番ではAIがあなたの画像を見て、実際に採点・添削します。</p>
       </section>
@@ -317,6 +331,14 @@
       <p class="footer-note">🏋️ BannerGym prototype — design practice for everyone</p>
     </div>
     <div class="toast" id="toast"></div>
+
+    <div class="modal-overlay" id="refModal" onclick="if(event.target===this)closeReference()">
+      <div class="modal-card">
+        <div class="modal-head"><b>🔍 参考デザインを探す</b><button class="modal-x" onclick="closeReference()">✕</button></div>
+        <p class="modal-sub" id="refSub"></p>
+        <div id="refList"></div>
+      </div>
+    </div>
 
     <script>
       /* =========================================================
@@ -511,6 +533,18 @@
         click:"行動（クリック）につなげるため",
         sekaikan:"ターゲットに刺さるトーンにするため",
       };
+
+      // 参考デザインのギャラリー集（タイプ別）
+      const GALLERIES = [
+        { name:"サンコウデザイン", desc:"Webデザインの参考ギャラリー", url:"https://sankoudesign.com/", tags:["Webサイト","LP","バナー"] },
+        { name:"LPアーカイブ（rdlp）", desc:"ランディングページ専門の作例集", url:"https://rdlp.jp/lp-archive/", tags:["LP"] },
+        { name:"バナー広場", desc:"バナーデザインのまとめ", url:"https://banner-hiroba.com/", tags:["バナー"] },
+        { name:"バナーデザインアーカイブ", desc:"いろんなバナーの作例集", url:"https://bannnner.com/", tags:["バナー"] },
+        { name:"デザインライブラリー", desc:"バナー・LPなど幅広い作例", url:"http://design-library.jp/", tags:["バナー","LP","Webサイト"] },
+        { name:"デザインライブラリー（メルマガ）", desc:"メルマガ・バナーの作例", url:"https://design-library.jp/mailmagazine/", tags:["バナー"] },
+        { name:"サムネイルギャラリー", desc:"YouTubeサムネの作例集", url:"https://thumbnail-gallery.net/", tags:["サムネ"] },
+        { name:"TVer", desc:"番組サムネの見せ方の参考に", url:"https://tver.jp/", tags:["サムネ"] },
+      ];
 
       const store = {
         get(){
@@ -782,11 +816,28 @@
       function nextOdai(){ openOdai(pickOdai()); toast("📩 新しいお題が届いたで！"); }
       function reChallenge(){ openOdai(currentOdai); toast("🔁 同じお題でもういっちょ！"); }
       function openReference(){
-        const b=currentOdai.brief;
-        const impression=(b["印象"]||"").split(/[・、(（]/)[0].trim();
-        const q=`${currentOdai.lvName} デザイン ${impression}`.trim();
-        window.open("https://www.pinterest.jp/search/pins/?q="+encodeURIComponent(q), "_blank");
+        const type = currentOdai ? currentOdai.lvName : "";
+        document.getElementById("refSub").textContent = type ? `今のお題「${type}」に合いそうな参考から表示しとるで🦁` : "参考デザインを探そか🦁";
+        const list=document.getElementById("refList"); list.innerHTML="";
+        // Pinterest（お題のキーワードで検索）
+        const b=currentOdai ? currentOdai.brief : {};
+        const impression=((b["印象"]||"").split(/[・、(（]/)[0]||"").trim();
+        const q=`${type} デザイン ${impression}`.trim();
+        list.appendChild(refLinkEl("📌 Pinterestで検索", "「"+q+"」で画像をたくさん見る", "https://www.pinterest.jp/search/pins/?q="+encodeURIComponent(q)));
+        const matched=GALLERIES.filter((g)=>g.tags.includes(type));
+        const others=GALLERIES.filter((g)=>!g.tags.includes(type));
+        if(matched.length){ const h=document.createElement("div"); h.className="ref-cat"; h.textContent="このお題におすすめ"; list.appendChild(h);
+          matched.forEach((g)=>list.appendChild(refLinkEl("🎨 "+g.name, g.desc, g.url))); }
+        const h2=document.createElement("div"); h2.className="ref-cat"; h2.textContent=matched.length?"そのほかのギャラリー":"ギャラリー一覧"; list.appendChild(h2);
+        others.forEach((g)=>list.appendChild(refLinkEl("🎨 "+g.name, g.desc, g.url)));
+        document.getElementById("refModal").classList.add("show");
       }
+      function refLinkEl(title, desc, url){
+        const a=document.createElement("a"); a.className="ref-link"; a.href=url; a.target="_blank"; a.rel="noopener";
+        a.innerHTML=`<div><div>${title}</div><div class="rd">${desc}</div></div><div style="color:var(--sub)">›</div>`;
+        return a;
+      }
+      function closeReference(){ document.getElementById("refModal").classList.remove("show"); }
 
       function toast(msg){
         const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");

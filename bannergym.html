@@ -221,7 +221,7 @@
           </div>
           <div class="coach-row">
             <div class="coach-mini">🦁</div>
-            <div class="coach-bubble">いっしょにデザインを鍛えていこー！</div>
+            <div class="coach-bubble">今日も一日、デザイン鍛えていこかー！💪</div>
           </div>
           <button class="btn" onclick="openOdai()">🚩 今日のお題を受け取る</button>
         </div>
@@ -269,7 +269,7 @@
         <div class="card loading">
           <div style="font-size:48px;margin-bottom:8px">🦁🔍</div>
           <div class="spinner"></div>
-          <div id="scoringMsg" style="font-size:15.5px;font-weight:700">コーチが作品をジャッジ中…</div>
+          <div id="scoringMsg" style="font-size:15.5px;font-weight:700">コーチが作品をジャッジ中やで…</div>
         </div>
       </section>
 
@@ -618,15 +618,15 @@
           total_score: total, scores, weakest_category: weakest,
           condition_check:{ catchcopy_used:true, theme_color_used:true, cta_present:Math.random()>0.3, size_ok:Math.random()>0.2 },
           good_points, improvements,
-          client_voice: total>=80 ? "ガオーッ！やるじゃないか、見直したぞ。だが慢心するな、この調子でいけ！💪"
-            : total>=65 ? "ふむ…悪くない。だが甘いっ！ここを直せばもっと伸びる。逃げるなよ。"
-            : "喝ーーっ！🔥 まだまだ伸びしろだらけだ。だが大丈夫、コーチがついてる。もう一本いくぞ！",
+          client_voice: total>=80 ? "ガオーッ！やるやないか、見直したで💪 せやけど慢心したらアカン、この調子でいこか！"
+            : total>=65 ? "ふむ…悪ないで。せやけど甘いっ！ここ直したらもっと伸びるわ。逃げたらアカンで。"
+            : "喝ーーっ！🔥 まだまだ伸びしろだらけやな。けど心配すな、ワシがついとる。もういっちょいこか！",
         };
       }
 
       function submitWork(){
         go("scoring");
-        const msgs=["コーチが作品をジャッジ中…","う〜む…どれどれ…","ビシッと添削していくぞ！"];
+        const msgs=["コーチが作品をジャッジ中やで…","ふむふむ…どれどれ…","ビシッと添削したるわ！"];
         let i=0; const sm=document.getElementById("scoringMsg");
         const timer=setInterval(()=>{ i=(i+1)%msgs.length; sm.textContent=msgs[i]; },900);
         setTimeout(()=>{
@@ -639,7 +639,7 @@
             renderResult(r, false, uploadedImg);
           } catch(err) {
             console.error(err);
-            toast("⚠️ エラーが発生しました。もう一度お試しください");
+            toast("⚠️ エラーやで…もういっぺん試してな");
             go("odai");
           }
         }, 2600);
@@ -668,11 +668,11 @@
       }
 
       function scoreRankLabel(t){
-        if(t>=90) return "プロ級！文句なしの完成度です";
-        if(t>=75) return "良い！実戦で通用するレベル";
-        if(t>=60) return "あと一歩。光るものがあります";
-        if(t>=40) return "基礎から見直すと伸びます";
-        return "ナイス挑戦！ここからが伸びどき";
+        if(t>=90) return "プロ級やん！文句なしや💮";
+        if(t>=75) return "ええやん！実戦で通用するで";
+        if(t>=60) return "あと一歩や。光るもんあるで";
+        if(t>=40) return "基礎から見直したら伸びるで";
+        return "ナイス挑戦や！ここからが伸びどきやで";
       }
 
       function renderResult(rec, fromHistory, fullImg){
@@ -691,8 +691,8 @@
         });
 
         const weakName=CATS.find((c)=>c.key===rec.weakest_category).name;
-        document.getElementById("priority").innerHTML = `🔥 <b>コーチの喝：</b>まずは「${weakName}」だ！ここを直せば一気に化けるぞ。`;
-        document.getElementById("reco").innerHTML = `🦁 <b>次はこれだ：</b>お前の伸びしろは「${weakName}」。それを鍛えるお題で出直してこい！`;
+        document.getElementById("priority").innerHTML = `🔥 <b>コーチの喝：</b>まずは「${weakName}」やで！ここ直したら一気に化けるわ。`;
+        document.getElementById("reco").innerHTML = `🦁 <b>次はこれや：</b>お前の伸びしろは「${weakName}」。それ鍛えるお題で出直してきいや！`;
 
         // 改善ガイド（赤ペン添削）
         document.getElementById("submittedImg").src = fullImg || rec.thumb || "";
@@ -722,7 +722,7 @@
             const ci=setInterval(()=>{ n+=step; if(n>=rec.total_score){ n=rec.total_score; clearInterval(ci);} num.textContent=n; },24);
           },120);
           if(rec.total_score>=85) confetti();
-          if(rec._rankUp){ setTimeout(()=>{ confetti(); toast("🎉 ランクアップ！「"+rec._rankUp+"」になりました！"); }, 1200); }
+          if(rec._rankUp){ setTimeout(()=>{ confetti(); toast("🎉 ランクアップや！「"+rec._rankUp+"」になったで！"); }, 1200); }
         }
       }
 
@@ -772,15 +772,15 @@
       function delRecord(id){
         if(!confirm("この記録を削除しますか？")) return;
         const s=store.get(); s.records=s.records.filter((x)=>x.id!==id); store.set(s);
-        refreshStats(); toast("🗑 記録を削除しました");
+        refreshStats(); toast("🗑 記録を消したで");
       }
       function clearAll(){
         if(!confirm("すべての記録を削除しますか？（元に戻せません）")) return;
-        const s=store.get(); s.records=[]; store.set(s); refreshStats(); toast("すべての記録を削除しました");
+        const s=store.get(); s.records=[]; store.set(s); refreshStats(); toast("ぜんぶ消したで");
       }
 
-      function nextOdai(){ openOdai(pickOdai()); toast("📩 新しいお題が届きました！"); }
-      function reChallenge(){ openOdai(currentOdai); toast("🔁 同じお題に再挑戦！"); }
+      function nextOdai(){ openOdai(pickOdai()); toast("📩 新しいお題が届いたで！"); }
+      function reChallenge(){ openOdai(currentOdai); toast("🔁 同じお題でもういっちょ！"); }
       function openReference(){
         const b=currentOdai.brief;
         const impression=(b["印象"]||"").split(/[・、(（]/)[0].trim();

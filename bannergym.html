@@ -482,7 +482,11 @@
       };
 
       const store = {
-        get(){ const d=JSON.parse(localStorage.getItem("bannergym")||"null"); return d || {count:0,streak:0,lastDay:"",records:[]}; },
+        get(){
+          const d=JSON.parse(localStorage.getItem("bannergym")||"null") || {};
+          // 古い保存形式でも壊れないように、足りない項目を補う
+          return { count:d.count||0, streak:d.streak||0, lastDay:d.lastDay||"", records:Array.isArray(d.records)?d.records:[] };
+        },
         set(s){ try{ localStorage.setItem("bannergym", JSON.stringify(s)); return true; }catch(e){ return false; } },
       };
       let currentOdai=null, uploadedImg=null, currentThumb=null, trendChartObj=null, radarChartObj=null;
@@ -596,11 +600,17 @@
         const timer=setInterval(()=>{ i=(i+1)%msgs.length; sm.textContent=msgs[i]; },900);
         setTimeout(()=>{
           clearInterval(timer);
-          const r=demoScore();
-          r.odaiTitle=currentOdai.title; r.client=currentOdai.client; r.level=currentOdai.level; r.lvName=currentOdai.lvName;
-          r.thumb=currentThumb||uploadedImg;
-          saveRecord(r);
-          renderResult(r, false, uploadedImg);
+          try {
+            const r=demoScore();
+            r.odaiTitle=currentOdai.title; r.client=currentOdai.client; r.level=currentOdai.level; r.lvName=currentOdai.lvName;
+            r.thumb=currentThumb||uploadedImg;
+            saveRecord(r);
+            renderResult(r, false, uploadedImg);
+          } catch(err) {
+            console.error(err);
+            toast("⚠️ エラーが発生しました。もう一度お試しください");
+            go("odai");
+          }
         }, 2600);
       }
 

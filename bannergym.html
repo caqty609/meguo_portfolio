@@ -151,6 +151,21 @@
       /* 紙吹雪 */
       .confetti { position: fixed; top: -10px; width: 10px; height: 14px; z-index: 60; pointer-events: none; opacity: .9; }
       @keyframes drop { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+      /* 改善ガイド（赤ペン添削） */
+      .annot-wrap { position: relative; display: inline-block; max-width: 100%; margin: 8px 0 14px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.14); }
+      .annot-img { display: block; max-width: 100%; max-height: 380px; }
+      #annotLayer { position: absolute; inset: 0; pointer-events: none; }
+      .marker { position: absolute; transform: translate(-50%,-50%); width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; border: 2.5px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.35); animation: pop .4s ease backwards; }
+      @keyframes pop { from { transform: translate(-50%,-50%) scale(0);} to { transform: translate(-50%,-50%) scale(1);} }
+      .guide-good { background: #e7f7ef; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; line-height: 1.7; margin: 4px 0 14px; }
+      .guide-good b { color: #138a5b; }
+      .guide-item { display: flex; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+      .guide-item .gnum { flex: 0 0 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+      .guide-item .gtxt { font-size: 13.5px; line-height: 1.6; }
+      .guide-item .gtxt b { color: var(--ink); }
+      .guide-item .gwhy { color: var(--sub); font-size: 12.5px; margin-top: 2px; }
+      .demo-tag { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--sub); background: #eef0f7; border-radius: 6px; padding: 2px 8px; margin-top: 6px; }
     </style>
   </head>
   <body>
@@ -229,6 +244,7 @@
               <div class="num"><b id="totalScore">0</b><small>点 / 100</small></div>
             </div>
             <div class="score-rank-label" id="scoreRank"></div>
+            <div class="demo-tag">デモ：点数はランダムの仮値です</div>
           </div>
           <div class="review">
             <div class="who">💬 <span id="reviewClient"></span> の感想</div>
@@ -240,9 +256,20 @@
           <div class="priority" id="priority"></div>
           <div class="reco" id="reco"></div>
         </div>
+
+        <div class="card">
+          <div class="section-label">📝 改善ガイド（どこを・どう直す）</div>
+          <p style="font-size:13px;color:var(--sub);margin:2px 0 0">画像の番号と、下の解説が対応しています。</p>
+          <div class="annot-wrap"><img id="submittedImg" class="annot-img" alt="提出作品" /><div id="annotLayer"></div></div>
+          <div class="guide-good" id="goodPoints"></div>
+          <div id="guideItems"></div>
+        </div>
+
         <button class="btn" onclick="nextOdai()">🎯 おすすめの次のお題に挑戦</button>
+        <button class="btn ghost" onclick="reChallenge()" style="margin-top:10px">🔁 同じお題でもう一度</button>
+        <button class="btn ghost" onclick="openReference()" style="margin-top:10px">🔍 参考デザインを探す（Pinterest）</button>
         <button class="btn ghost" onclick="go('home')" style="margin-top:10px">🏠 ホームにもどる</button>
-        <p class="demo-note">※ これはデモ版です。点数とコメントは仮のものです（本番ではAIが画像を見て採点します）。</p>
+        <p class="demo-note">※ これはデモ版です。点数・コメント・改善ガイドは仮の内容です。<br>本番ではAIがあなたの画像を見て、実際に採点・添削します。</p>
       </section>
 
       <p class="footer-note">BannerGym prototype — design practice for everyone</p>
@@ -502,14 +529,21 @@
       ========================================================= */
       function demoScore(){
         const scores={};
-        CATS.forEach((c)=>{ scores[c.key]=Math.floor(60+Math.random()*36); });
+        CATS.forEach((c)=>{ scores[c.key]=Math.floor(45+Math.random()*48); }); // デモ：45〜92点
         const total=Math.round(CATS.reduce((a,c)=>a+scores[c.key],0)/CATS.length);
-        let weakest=CATS[0].key, min=999;
-        CATS.forEach((c)=>{ if(scores[c.key]<min){ min=scores[c.key]; weakest=c.key; } });
+        // 点数の低い順に並べ、弱点トップ3を改善ポイントに
+        const sorted=[...CATS].sort((a,b)=>scores[a.key]-scores[b.key]);
+        const weakest=sorted[0].key;
+        const spots=[{x:24,y:26},{x:72,y:42},{x:42,y:78}]; // 添削マーカーの位置（デモ用）
+        const improvements=sorted.slice(0,3).map((c,i)=>({
+          n:i+1, where:c.name, how:COMMENTS[c.key].lo, why:"お題の狙いにもっと近づけるため",
+          x:spots[i].x, y:spots[i].y,
+        }));
+        const good_points=sorted.slice(-2).map((c)=>COMMENTS[c.key].hi);
         return {
-          total_score: total, scores,
+          total_score: total, scores, weakest_category: weakest,
           condition_check:{ catchcopy_used:true, theme_color_used:true, cta_present:Math.random()>0.3, size_ok:Math.random()>0.2 },
-          weakest_category: weakest,
+          good_points, improvements,
           client_voice: total>=80 ? "わぁ、想像以上です！このまま本番でも使いたいくらいです。"
             : total>=65 ? "いいですね！方向性バッチリです。あと少し詰めれば完璧かも。"
             : "ありがとうございます！良いところもあるので、一緒にブラッシュアップしましょう。",
@@ -569,6 +603,14 @@
         document.getElementById("priority").innerHTML = `🎯 <b>最優先で直すなら：</b>「${weakName}」。ここを伸ばすと全体の印象が一段上がります。`;
         document.getElementById("reco").innerHTML = `✨ <b>次のおすすめ：</b>あなたは今「${weakName}」が伸びしろ。それを鍛えるお題に挑戦してみましょう！`;
 
+        // 改善ガイド（赤ペン添削）
+        document.getElementById("submittedImg").src = uploadedImg || "";
+        const layer=document.getElementById("annotLayer"); layer.innerHTML="";
+        r.improvements.forEach((im)=>{ const m=document.createElement("div"); m.className="marker"; m.style.left=im.x+"%"; m.style.top=im.y+"%"; m.textContent=im.n; layer.appendChild(m); });
+        document.getElementById("goodPoints").innerHTML = "<b>👍 良い点</b><br>"+r.good_points.map((g)=>"・"+g).join("<br>");
+        const gi=document.getElementById("guideItems"); gi.innerHTML="";
+        r.improvements.forEach((im)=>{ gi.innerHTML += `<div class="guide-item"><div class="gnum">${im.n}</div><div class="gtxt"><b>${im.where}</b>：${im.how}<div class="gwhy">なぜ：${im.why}</div></div></div>`; });
+
         drawRadar(r.scores);
         go("result");
 
@@ -609,6 +651,13 @@
       }
 
       function nextOdai(){ openOdai(pickOdai()); toast("📩 新しいお題が届きました！"); }
+      function reChallenge(){ openOdai(currentOdai); toast("🔁 同じお題に再挑戦！"); }
+      function openReference(){
+        const b=currentOdai.brief;
+        const impression=(b["印象"]||"").split(/[・、(（]/)[0].trim();
+        const q=`${currentOdai.lvName} デザイン ${impression}`.trim();
+        window.open("https://www.pinterest.jp/search/pins/?q="+encodeURIComponent(q), "_blank");
+      }
 
       function toast(msg){
         const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show");

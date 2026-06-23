@@ -315,7 +315,7 @@
 
         <div class="card">
           <div class="section-label">📝 改善ガイド（どこを・どう直す）</div>
-          <p style="font-size:12.5px;color:#d23b3b;background:#fdeaea;border-radius:8px;padding:8px 10px;margin:6px 0 0">⚠️ デモ版：このコメント・マーカー位置は<b>画像を見て作ったものではありません</b>（固定のサンプル文）。本番ではAIが実際に画像を見て、的確に添削します。</p>
+          <p id="guideDemoNote" style="font-size:12.5px;color:#d23b3b;background:#fdeaea;border-radius:8px;padding:8px 10px;margin:6px 0 0">⚠️ デモ版：このコメント・マーカー位置は<b>画像を見て作ったものではありません</b>（固定のサンプル文）。サーバー経由でAIにつなぐと、実際に画像を見て添削します。</p>
           <div class="annot-wrap"><img id="submittedImg" class="annot-img" alt="提出作品" /><div id="annotLayer"></div></div>
           <div class="guide-good" id="goodPoints"></div>
           <div id="guideItems"></div>
@@ -325,7 +325,7 @@
         <button class="btn ghost" onclick="reChallenge()" style="margin-top:10px">🔁 同じお題でもう一度</button>
         <button class="btn ghost" onclick="openReference()" style="margin-top:10px">🔍 参考デザインを探す</button>
         <button class="btn ghost" onclick="go('home')" style="margin-top:10px">🏠 ホームにもどる</button>
-        <p class="demo-note">※ これはデモ版です。点数・コメント・改善ガイドは仮の内容です。<br>本番ではAIがあなたの画像を見て、実際に採点・添削します。</p>
+        <p class="demo-note" id="bottomDemoNote">※ これはデモ版です。点数・コメント・改善ガイドは仮の内容です。<br>サーバー経由でAIにつなぐと、あなたの画像を見て実際に採点・添削します。</p>
       </section>
 
       <p class="footer-note">🏋️ BannerGym prototype — design practice for everyone</p>
@@ -658,25 +658,46 @@
         };
       }
 
-      function submitWork(){
+      async function submitWork(){
         go("scoring");
         const msgs=["コーチが作品をジャッジ中やで…","ふむふむ…どれどれ…","ビシッと添削したるわ！"];
         let i=0; const sm=document.getElementById("scoringMsg");
         const timer=setInterval(()=>{ i=(i+1)%msgs.length; sm.textContent=msgs[i]; },900);
-        setTimeout(()=>{
+        try {
+          const r = await scoreWork();
           clearInterval(timer);
-          try {
-            const r=demoScore();
-            r.odaiTitle=currentOdai.title; r.client=currentOdai.client; r.level=currentOdai.level; r.lvName=currentOdai.lvName;
-            r.thumb=currentThumb||uploadedImg;
-            saveRecord(r);
-            renderResult(r, false, uploadedImg);
-          } catch(err) {
-            console.error(err);
-            toast("⚠️ エラーやで…もういっぺん試してな");
-            go("odai");
-          }
-        }, 2600);
+          r.odaiTitle=currentOdai.title; r.client=currentOdai.client; r.level=currentOdai.level; r.lvName=currentOdai.lvName;
+          r.thumb=currentThumb||uploadedImg;
+          saveRecord(r);
+          renderResult(r, false, uploadedImg);
+        } catch(err) {
+          clearInterval(timer); console.error(err);
+          toast("⚠️ エラーやで…もういっぺん試してな"); go("odai");
+        }
+      }
+
+      // 本物のAI（ローカルサーバー経由）を試す。つながらん時はデモ採点に切り替え。
+      async function scoreWork(){
+        try {
+          const res = await fetch("/api/score", {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({ odai: buildOdaiText(currentOdai), image: uploadedImg }),
+          });
+          if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.error||("api "+res.status)); }
+          const data = await res.json();
+          if(data && data.scores){ data.ai=true; return data; }
+          throw new Error("bad data");
+        } catch(e){
+          console.warn("AI採点に接続できへんからデモ採点を使うで:", e.message);
+          await new Promise((r)=>setTimeout(r,1200));
+          return demoScore();
+        }
+      }
+
+      function buildOdaiText(o){
+        let t = `タイトル: ${o.title}\nタイプ: LV${o.level} ${o.lvName}\nクライアント: ${o.client}\n`;
+        for(const [k,v] of Object.entries(o.brief||{})) t += `${k}: ${v}\n`;
+        return t;
       }
 
       function saveRecord(r){
@@ -689,9 +710,9 @@
         r.date=Date.now();
         // 保存用レコード（フル画像は持たず、軽いサムネだけ）
         const rec={ id:r.id, date:r.date, odaiTitle:r.odaiTitle, client:r.client, level:r.level, lvName:r.lvName,
-          total_score:r.total_score, scores:r.scores, weakest_category:r.weakest_category,
+          total_score:r.total_score, scores:r.scores, comments:r.comments, weakest_category:r.weakest_category,
           condition_check:r.condition_check, good_points:r.good_points, improvements:r.improvements,
-          client_voice:r.client_voice, thumb:r.thumb };
+          client_voice:r.client_voice, thumb:r.thumb, ai:r.ai };
         s.records.push(rec);
         if(s.records.length>30) s.records=s.records.slice(-30); // 最大30件
         // 容量オーバー時は古い記録から自動で削る
@@ -720,7 +741,7 @@
         const items=document.getElementById("items"); items.innerHTML="";
         CATS.forEach((c)=>{
           const sc=rec.scores[c.key];
-          const cm = sc>=75 ? COMMENTS[c.key].hi : COMMENTS[c.key].lo;
+          const cm = (rec.comments && rec.comments[c.key]) ? rec.comments[c.key] : (sc>=75 ? COMMENTS[c.key].hi : COMMENTS[c.key].lo);
           items.innerHTML += `<div class="item"><div class="row"><span class="name">${c.name}</span><span class="sc">${sc}点</span></div><div class="bar"><div data-w="${sc}%"></div></div><div class="cm">${cm}</div></div>`;
         });
 
@@ -735,6 +756,10 @@
         document.getElementById("goodPoints").innerHTML = "<b>👍 良い点</b><br>"+rec.good_points.map((g)=>"・"+g).join("<br>");
         const gi=document.getElementById("guideItems"); gi.innerHTML="";
         rec.improvements.forEach((im)=>{ gi.innerHTML += `<div class="guide-item"><div class="gnum">${im.n}</div><div class="gtxt"><b>${im.where}</b>：${im.how}<div class="gwhy">なぜ：${im.why}</div></div></div>`; });
+
+        const isAI=!!rec.ai;
+        document.getElementById("guideDemoNote").style.display = isAI?"none":"block";
+        document.getElementById("bottomDemoNote").style.display = isAI?"none":"block";
 
         drawRadar(rec.scores);
         go("result");

@@ -120,6 +120,20 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // 画像ファイル（コーチのイラストなど）を配信
+  if (req.method === "GET" && /\.(png|jpe?g|svg|webp|gif)$/i.test(req.url)) {
+    const file = path.join(__dirname, decodeURIComponent(req.url.split("?")[0]));
+    if (!file.startsWith(__dirname)) { res.writeHead(403); res.end(); return; }
+    fs.readFile(file, (e, data) => {
+      if (e) { res.writeHead(404); res.end(); return; }
+      const ext = path.extname(file).toLowerCase().slice(1);
+      const types = { png:"image/png", jpg:"image/jpeg", jpeg:"image/jpeg", svg:"image/svg+xml", webp:"image/webp", gif:"image/gif" };
+      res.writeHead(200, { "Content-Type": types[ext] || "application/octet-stream" });
+      res.end(data);
+    });
+    return;
+  }
+
   res.writeHead(404); res.end("not found");
 });
 

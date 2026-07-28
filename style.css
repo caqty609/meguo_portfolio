@@ -13,6 +13,7 @@ body {
   max-width: 1000px;
   margin-inline: auto;
   padding: 0 20px;
+  box-sizing: border-box;
 }
 
 h3 {
@@ -464,7 +465,7 @@ span {
 
 /********* コンタクト　*********/
 .contact {
-  padding: 90px 0 220px;
+  padding: 90px 0 140px;
   background-image: url(img/contact_bg.jpg);
   background-size: cover;
   background-position: 150% center;
@@ -501,6 +502,7 @@ textarea {
   border-radius: 5px;
   padding: 10px;
   font-size: 1rem;
+  box-sizing: border-box;
 }
 
 input[type="text"],
@@ -521,10 +523,15 @@ input[type="submit"] {
   margin-inline: auto;
   display: block;
   transition: background 0.3s ease;
+  margin-top: 80px;
 }
 
 [type="submit"]:hover {
   background: #cc4949;
+}
+
+textarea {
+  height: 220px;
 }
 
 /********* フッター　*********/
@@ -533,7 +540,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px;
+  height: 150px;
 }
 
 footer p {
@@ -575,9 +582,8 @@ footer p {
     white-space: nowrap;
   }
 
-  /* 解決：h2の左揃え */
   .mv .inner {
-    padding: 0 20px; /* ロゴと同じ20pxに設定 */
+    padding: 0 20px;
     width: 100%;
     box-sizing: border-box;
   }

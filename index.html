@@ -3,28 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>base cafe 大石</title>
+    <title>base</title>
     <link rel="stylesheet" href="style.css" />
+    <!-- Symbols -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=train"
+    />
+
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="function.js" defer></script>
   </head>
   <body>
     <header>
       <div class="inner">
-        <h1 class="logo">
-          <a href="index.html"></a><img src="img/logo.png" alt="ロゴ" />
-        </h1>
-        <ul class="nav_list">
-          <li><a href="#about">ABOUT</a></li>
-          <li><a href="#menu">MENU</a></li>
-          <li><a href="#access">ACCESS</a></li>
-          <li><a href="index.html">CONTACT</a></li>
-        </ul>
+        <div class="hamburger" id="js-hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+          <p class="hamburger_text">MENU</p>
+        </div>
+
+        <p class="header_notice">
+          <span class="news">NEWS</span>
+          <button class="notice_prev" type="button">＜</button>
+          <a href="#" class="notice_link">2026.07.01 営業時間変更のお知らせ</a>
+          <button class="notice_next" type="button">＞</button>
+        </p>
+
+        <div class="nav_panel">
+          <div class="nav_panel_logo">
+            <img src="img/baselogo.png" alt="Cafe BASE" />
+          </div>
+
+          <ul class="nav_list">
+            <li><a href="#about">ABOUT</a></li>
+            <li><a href="#menu">MENU</a></li>
+            <li><a href="#access">ACCESS</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+          </ul>
+
+          <div class="nav_panel_sns">
+            <a
+              href="https://instagram.com/cafe_base_takarazuka"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a
+              href="https://facebook.com/cafe_base_takarazuka"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="fa-brands fa-facebook"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </header>
 
     <main>
       <section class="mv">
-        <div class="inner">
-          <h2>Good Time<br />Good Coffee</h2>
+        <div class="mv-bg mv-bg--1"></div>
+        <div class="mv-bg mv-bg--2"></div>
+        <div class="mv-bg mv-bg--3"></div>
+        <div class="mv-logo">
+          <div><img src="img/baselogo.png" alt="Cafe BASE" /></div>
+        </div>
+      </section>
+      <section class="catch">
+        <div class="inner" data-aos="fade-up">
+          <span>Coffee by the River.</span>
+          <h2>川を眺め、珈琲と過ごす。</h2>
         </div>
       </section>
 
@@ -32,15 +87,31 @@
         <div class="inner">
           <h3>ABOUT</h3>
           <h4>BASE CAFEについて</h4>
-          <p class="about_p">
+          <div class="about_content">
+            <div class="about_img">
+              <img src="img/Indoor.jpg" alt="室内" />
+            </div>
+            <div class="about_text">
+              <p>
+                慌ただしい毎日から、少しだけ離れて。<br />
+                武庫川と移ろう空を眺めながら、<br />
+                挽きたてのコーヒーをお楽しみください。<br />
+                一人で静かに。 誰かとゆっくり。<br />
+                思い思いに過ごせる、川沿いの小さなカフェです。
+              </p>
+              <img src="img/brew.jpg" alt="コーヒーを淹れる" />
+            </div>
+          </div>
+          <!-- <p class="about_p">
             BASE CAFEは、宝塚の武庫川沿いにある隠れ家的にあるカフェです。<br />
             ほっと一息、挽きたてのコーヒーを飲みながら、<br />
             武庫川と宝塚大劇場を臨むBASE CAFEでおくつろぎください。
-          </p>
+          </p> -->
         </div>
       </section>
 
       <section id="menu">
+        <img class="illust_pot" src="img/illust_pot.png" alt="" />
         <div class="inner">
           <h3>MENU</h3>
           <h4>メニュー</h4>
@@ -54,7 +125,7 @@
               <li>
                 <img src="img/menu_2.jpg" alt="アメリカンコーヒー" />
                 <p class="name">アメリカンコーヒー</p>
-                <p class="prrice">￥400</p>
+                <p class="price">￥400</p>
               </li>
               <li>
                 <img src="img/menu_3.jpg" alt="紅茶" />
@@ -72,7 +143,10 @@
                 <p class="price">￥400</p>
               </li>
               <li>
-                <img src="img/menu_6.jpg" alt="ブレンドコーヒー" />
+                <img
+                  src="img/menu_6.jpg"
+                  alt="サーモンとアボカドの一口サラダ"
+                />
                 <p class="name">サーモンとアボカドの一口サラダ</p>
                 <p class="price">￥400</p>
               </li>
@@ -122,6 +196,16 @@
             <p>電話：0797-24-9030</p>
             <p>営業時間：7:00〜17:00(定休日/月曜日)</p>
           </div>
+          <div class="access_time">
+            <p class="access_line">
+              <span class="material-symbols-outlined"> train </span
+              >阪急宝塚南口駅 徒歩約３分
+            </p>
+            <p class="access_line">
+              <span class="material-symbols-outlined"> train </span>阪急・JR宝塚
+              徒歩約９分
+            </p>
+          </div>
         </div>
         <div class="map">
           <iframe
@@ -135,10 +219,57 @@
           ></iframe>
         </div>
       </section>
+      <section id="contact" class="contact">
+        <div class="inner">
+          <h3>CONTACT</h3>
+          <h4>コンタクト</h4>
+
+          <form action="#">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input
+                type="text"
+                id="name"
+                name="your-name"
+                class="feedback-input"
+                placeholder="山田 太郎"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="your-email"
+                class="feedback-input"
+                placeholder="example@mail.com"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="message">Comment</label>
+              <textarea
+                name="your-message"
+                id="message"
+                class="feedback-input"
+                placeholder="ご自由にご記入ください"
+              ></textarea>
+            </div>
+
+            <input type="submit" class="button" value="送信" />
+          </form>
+        </div>
+      </section>
     </main>
 
     <footer>
       <p>@BASE Cafe</p>
     </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init({ once: true, duration: 800 });
+    </script>
   </body>
 </html>

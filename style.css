@@ -315,7 +315,6 @@ h2 {
   font-size: 36px;
   color: #655046;
   letter-spacing: 0.1em;
-  /* line-height: 100px; */
   padding-top: 30px;
   text-align: center;
 }
@@ -355,7 +354,6 @@ span {
 }
 .about_text img {
   max-width: 300px;
-  /* min-width: 280px; */
   margin-top: 70px;
   margin-left: auto;
   display: block;
@@ -368,10 +366,9 @@ span {
 
 .illust_pot {
   position: absolute;
-  top: -120px;
-  left: 20%;
-  transform: translateX(-50%);
-  width: 140px;
+  top: -5px;
+  left: 20px;
+  width: 120px;
 }
 
 .menu_list {
@@ -435,8 +432,10 @@ span {
 #access .inner {
   background-image: url(img/illust_shop.png);
   background-repeat: no-repeat;
-  background-size: 360px;
-  background-position: right 20px top;
+  background-size: 50%;
+  padding-bottom: 150px;
+  background-position: right 20px bottom;
+  background-origin: content-box;
 }
 .access_info {
   text-align: left;
@@ -588,6 +587,11 @@ footer p {
     box-sizing: border-box;
   }
 
+  .nav_panel_logo {
+    width: 80%;
+    /* margin-bottom: 60px; */
+  }
+
   h2 {
     font-size: 36px;
     line-height: 1.6;
@@ -612,11 +616,15 @@ footer p {
   }
 
   .about_text img {
-    margin-left: 0;
+    margin-inline: auto;
+  }
+
+  #access .inner {
+    background-size: 80%;
+    padding-bottom: 60px;
   }
 }
 
-/* さらに小さいスマホ用（390px以下） */
 @media screen and (max-width: 390px) {
   .header_notice .news {
     display: none;

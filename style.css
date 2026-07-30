@@ -364,6 +364,11 @@ span {
   position: relative;
 }
 
+#menu h3 {
+  position: relative;
+  z-index: 2;
+}
+
 .illust_pot {
   position: absolute;
   top: -5px;
